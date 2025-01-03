@@ -48,7 +48,7 @@ const ColumColCard: React.FC<CardProps> = ({ data, handleNav }) => {
           <div className="text-right pr-2">
             <p className="font-medium text-sm sm:text-lg lg:text-lg text-neutral50">
               {formatPrice(data.floor)}
-              <span className="ml-1 text-xs sm:text-sm">Edu</span>
+              <span className="ml-1 text-xs sm:text-sm">EDU</span>
             </p>
             <span className="font-medium text-xs sm:text-sm lg:text-md text-neutral200">
               ${formatPrice(data.floor * citreaPrice)}k
@@ -59,7 +59,7 @@ const ColumColCard: React.FC<CardProps> = ({ data, handleNav }) => {
           <div className="text-right">
             <p className="font-medium text-sm sm:text-lg lg:text-lg text-neutral50">
               {formatPrice(data.volume)}
-              <span className="ml-1 text-xs sm:text-sm">Edu</span>
+              <span className="ml-1 text-xs sm:text-sm">EDU</span>
             </p>
             <span className="font-medium text-xs sm:text-sm lg:text-md  text-neutral200">
               ${formatPrice(data.volume * citreaPrice)}k
@@ -70,7 +70,7 @@ const ColumColCard: React.FC<CardProps> = ({ data, handleNav }) => {
           <div className="text-right">
             <p className="font-medium text-sm sm:text-lg lg:text-lg text-neutral50">
               {formatPrice(data.marketCap)}
-              <span className="ml-1 text-xs sm:text-sm">Edu</span>
+              <span className="ml-1 text-xs sm:text-sm">EDU</span>
             </p>
             <span className="font-medium text-xs sm:text-sm  lg:text-md text-neutral200">
               ${formatPrice(data.marketCap * citreaPrice)}k

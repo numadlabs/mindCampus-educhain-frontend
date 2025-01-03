@@ -215,7 +215,7 @@ const BuyAssetModal: React.FC<ModalProps> = ({
                       List Price
                     </p>
                     <p className="text-lg text-neutral50 font-bold">
-                      {formatPrice(price)} Edu
+                      {formatPrice(price)} EDU
                     </p>
                   </div>
                 </div>

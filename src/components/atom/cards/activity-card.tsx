@@ -63,7 +63,7 @@ const ActivityCard: React.FC<cardProps> = ({
             : data?.price / 10 ** 18}{" "}
           {data?.activityType === "MINTED" || data?.activityType === "TRANSFER"
             ? ""
-            : "Edu"}
+            : "EDU"}
         </p>
         <p className="text-sm text-neutral200 font-medium">
           {data?.activityType === "MINTED" || data?.activityType === "TRANSFER"

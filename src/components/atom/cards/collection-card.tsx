@@ -36,7 +36,7 @@ const CollectionCard: React.FC<CardType> = ({ data, handleNav }) => {
             </p>
             <p className="pt-1 sm:pt-2 font-bold text-xs sm:text-sm md:text-md text-neutral-50">
               {formatPrice(data.floor)}
-              <span className="ml-1">Edu</span>
+              <span className="ml-1">EDU</span>
             </p>
           </div>
           <div className="text-start">
@@ -45,7 +45,7 @@ const CollectionCard: React.FC<CardType> = ({ data, handleNav }) => {
             </p>
             <p className="pt-1 sm:pt-2 font-bold text-xs sm:text-sm md:text-md text-neutral-50">
               {formatPrice(data?.volume)}
-              <span className="ml-1">Edu</span>
+              <span className="ml-1">EDU</span>
             </p>
           </div>
         </div>

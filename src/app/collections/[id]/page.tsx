@@ -185,7 +185,7 @@ const CollectionDetailPage = () => {
                               ? formatPrice(collectionData.floor)
                               : "0"}
                           </span>{" "}
-                          Edu
+                          EDU
                         </p>
                       </div>
                     </div>
@@ -208,7 +208,7 @@ const CollectionDetailPage = () => {
                               ? formatPrice(collectionData?.volume)
                               : "0"}
                           </span>{" "}
-                          Edu
+                          EDU
                         </p>
                       </div>
                     </div>
