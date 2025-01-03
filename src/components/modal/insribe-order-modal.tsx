@@ -38,12 +38,12 @@ const InscribeOrderModal: React.FC<modalProps> = ({
 
   const { data: paymentStatus = [] } = useQuery({
     queryKey: ["paymentStatus"],
-    queryFn:() => checkOrderStatus(id, txid),
+    queryFn: () => checkOrderStatus(id, txid),
     enabled: !!id && !!txid,
     refetchInterval: 5000,
   });
 
-  console.log(paymentStatus)
+  console.log(paymentStatus);
 
   const totalFee = orders?.networkFee + orders?.serviceFee;
   const router = useRouter();
@@ -126,9 +126,9 @@ const InscribeOrderModal: React.FC<modalProps> = ({
   };
   const formatPrice = (price: number) => {
     const btcAmount = price;
-    return btcAmount?.toLocaleString('en-US', {
-      minimumFractionDigits:0,
-      maximumFractionDigits: 6
+    return btcAmount?.toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 6,
     });
   };
   return (
@@ -176,7 +176,7 @@ const InscribeOrderModal: React.FC<modalProps> = ({
         <div className="flex flex-row justify-between items-center -4 w-full bg-white4 rounded-2xl p-4">
           <p className="text-lg text-neutral100 font-medium">Total Amount</p>
           <p className="text-lg text-brand font-bold">
-            {formatPrice(totalFee)} cBTC
+            {formatPrice(totalFee)} Edu
           </p>
         </div>
         <div className="h-[1px] w-full bg-white8" />
@@ -198,7 +198,11 @@ const InscribeOrderModal: React.FC<modalProps> = ({
               <div className="flex flex-row items-center justify-between w-full bg-white4 p-4 rounded-2xl">
                 <div className="flex flex-row gap-3 items-center">
                   <div
-                    className={`h-8 w-8 ${orders?.orderStatus === "PENDING" ? "bg-white8" : "bg-success"} flex justify-center items-center rounded-[20px]`}
+                    className={`h-8 w-8 ${
+                      orders?.orderStatus === "PENDING"
+                        ? "bg-white8"
+                        : "bg-success"
+                    } flex justify-center items-center rounded-[20px]`}
                   >
                     {orders?.orderStatus === "PENDING" ? (
                       <p className="text-lg text-brand font-bold">1</p>
@@ -209,7 +213,9 @@ const InscribeOrderModal: React.FC<modalProps> = ({
                   <p className="text-neutral50 text-lg font-bold">Payment</p>
                 </div>
                 <p
-                  className={`text-lg font-medium ${getStatusColor(orders?.orderStatus)}`}
+                  className={`text-lg font-medium ${getStatusColor(
+                    orders?.orderStatus
+                  )}`}
                 >
                   {getPaymentStatus(orders?.orderStatus)}
                 </p>
@@ -217,7 +223,11 @@ const InscribeOrderModal: React.FC<modalProps> = ({
               <div className="flex flex-row items-center justify-between w-full bg-white4 p-4 rounded-2xl">
                 <div className="flex flex-row gap-3 items-center">
                   <div
-                    className={`h-8 w-8 ${orders?.orderStatus === "DONE" ? "bg-success" : "bg-white8"} flex justify-center items-center rounded-[20px]`}
+                    className={`h-8 w-8 ${
+                      orders?.orderStatus === "DONE"
+                        ? "bg-success"
+                        : "bg-white8"
+                    } flex justify-center items-center rounded-[20px]`}
                   >
                     {orders?.orderStatus === "DONE" ? (
                       <Check size={16} color="#111315" />
@@ -228,7 +238,9 @@ const InscribeOrderModal: React.FC<modalProps> = ({
                   <p className="text-neutral50 text-lg font-bold">Inscribe</p>
                 </div>
                 <p
-                  className={`text-lg font-medium ${getStatusColor(orders?.orderStatus)}`}
+                  className={`text-lg font-medium ${getStatusColor(
+                    orders?.orderStatus
+                  )}`}
                 >
                   {getInscribeStatus(orders?.orderStatus)}
                 </p>

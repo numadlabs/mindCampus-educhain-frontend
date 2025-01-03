@@ -320,7 +320,10 @@ const Badge = () => {
         collectionTxid: txid,
         mintFee: POMintPrice.toString(),
       };
-      const response = await mintFeeOfCitreaMutation({ data: params });
+      const response = await mintFeeOfCitreaMutation({
+        data: params,
+        userLayerId: authState.userLayerId,
+      });
       if (response && response.success) {
         const { singleMintTxHex } = response.data;
         console.log("create collection success", response);
@@ -687,7 +690,7 @@ const Badge = () => {
                       </div>
                       <div className="absolute right-4">
                         <p className="text-md text-neutral200 font-medium">
-                          cBTC
+                          Edu
                         </p>
                       </div>
                     </div>

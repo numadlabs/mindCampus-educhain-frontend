@@ -734,7 +734,7 @@ const Recursive = () => {
                       </div>
                       <div className="absolute right-4">
                         <p className="text-md text-neutral200 font-medium">
-                          cBTC
+                          Edu
                         </p>
                       </div>
                     </div>

@@ -31,7 +31,7 @@ const TruncatedAddress: React.FC<{ address: string | null }> = ({
   if (!address) return <span>-</span>;
   return (
     <span title={address}>{`${address.slice(0, 4)}...${address.slice(
-      -4,
+      -4
     )}`}</span>
   );
 };
@@ -74,7 +74,7 @@ const ColDetailCards: React.FC<ColDetailCardsProps> = ({ data }) => {
           <div className="w-full max-w-[200px] grid gap-1">
             <p className="font-medium text-lg text-neutral50">
               {formatPrice(data.price)}
-              <span className="ml-1">cBTC</span>
+              <span className="ml-1">Edu</span>
             </p>
             <p>
               {" "}

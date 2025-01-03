@@ -51,8 +51,6 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { CurrentLayerSchema } from "@/lib/validations/layer-validation";
 
-
-
 const Ipfs = () => {
   const router = useRouter();
   const { authState } = useAuth();
@@ -690,7 +688,7 @@ const Ipfs = () => {
                       </div>
                       <div className="absolute right-4">
                         <p className="text-md text-neutral200 font-medium">
-                          cBTC
+                          Edu
                         </p>
                       </div>
                     </div>

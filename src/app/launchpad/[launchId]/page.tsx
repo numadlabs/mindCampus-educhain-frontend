@@ -137,7 +137,7 @@ const Page = () => {
         });
         if (orderRes && orderRes.success) {
           toast.success("Success minted.");
-          router.push("/launchpad");
+          // router.push("/launchpad");
         } else {
           toast.error("Failed to confirm order");
         }

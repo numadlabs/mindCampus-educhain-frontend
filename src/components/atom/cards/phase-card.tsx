@@ -115,7 +115,9 @@ const PhaseCard: React.FC<PhaseCardItemProps> = ({
         </div>
         <div className="flex flex-row items-center gap-2 border bg-white8 border-transparent text-md rounded-lg pt-2 pr-3 pb-2 pl-3 text-neutral50">
           <span className="text-neutral100 font-medium text-md">{status}</span>
-          <span className="text-neutral50 font-medium text-md">{timeDisplay}</span>
+          <span className="text-neutral50 font-medium text-md">
+            {timeDisplay}
+          </span>
         </div>
       </div>
       {status === "Ended" ? (
@@ -133,7 +135,7 @@ const PhaseCard: React.FC<PhaseCardItemProps> = ({
             {mintPrice !== undefined && (
               <p className="text-neutral50">
                 <span className="mr-1">{mintPrice}</span>
-                cBTC
+                Edu
               </p>
             )}
           </div>

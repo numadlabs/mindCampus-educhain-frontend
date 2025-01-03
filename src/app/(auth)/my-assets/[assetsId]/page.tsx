@@ -200,7 +200,7 @@ export default function AssetsDetails() {
                         <p>List price</p>
                       </span>
                       <span className="font-bold text-neutral50 text-lg">
-                        <h1>{formatPrice(currentAsset.price)} cBTC</h1>
+                        <h1>{formatPrice(currentAsset.price)} Edu</h1>
                       </span>
                     </div>
                   </div>
