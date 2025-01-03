@@ -17,6 +17,9 @@ import {
   InscriptionCollectible,
   CreateLaunchParams,
   LaunchParams,
+  LaunchType,
+  LaunchItemType,
+  MintFeeType,
 } from "@/lib/types";
 import TextArea from "@/components/ui/textArea";
 import {
@@ -26,13 +29,14 @@ import {
   invokeOrderMint,
   createLaunchItems,
   createLaunch,
+  launchItems,
+  mintFeeOfCitrea,
 } from "@/lib/service/postRequest";
 import useCreateFormState from "@/lib/store/createFormStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import CollectionUploadFile from "@/components/section/collection-upload-file";
 import Toggle from "@/components/ui/toggle";
 import { Calendar2, Clock, Bitcoin } from "iconsax-react";
-import OrderPayModal from "@/components/modal/order-pay-modal";
 import { useAuth } from "@/components/provider/auth-context-provider";
 import moment from "moment";
 import SuccessModal from "@/components/modal/success-modal";
@@ -81,7 +85,7 @@ const Inscription = () => {
   const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
   const [fileSizes, setFileSizes] = useState<number[]>([]);
 
-  const stepperData = ["Details", "Upload", "Launch", "Confirm"];
+  const stepperData = ["Details", "Launch", "Upload", "Confirm"];
   const [totalFileSize, setTotalFileSize] = useState<number>(0);
   const [fileTypeSizes, setFileTypeSizes] = useState<number[]>([]);
   const [successModal, setSuccessModal] = useState(false);
@@ -110,6 +114,14 @@ const Inscription = () => {
 
   const { mutateAsync: createLaunchMutation } = useMutation({
     mutationFn: createLaunch,
+  });
+
+  const { mutateAsync: launchItemMutation } = useMutation({
+    mutationFn: launchItems,
+  });
+
+  const { mutateAsync: mintFeeOfCitreaMutation } = useMutation({
+    mutationFn: mintFeeOfCitrea,
   });
 
   const updateFileInfo = (files: File[]) => {
@@ -177,7 +189,7 @@ const Inscription = () => {
       toast.error("Layer information not available");
       return;
     }
-    if (currentLayer.layer === "CITREA" && !window.ethereum) {
+    if (currentLayer.layer === "EDUCHAIN" && !window.ethereum) {
       toast.error("Please install MetaMask extension to continue");
       return;
     }
@@ -197,18 +209,18 @@ const Inscription = () => {
         const response = await createCollectionMutation({ data: params });
         console.log("🚀 ~ handleCreateCollection ~ response:", response);
         if (response && response.success) {
-          const { id } = response.data.ordinalCollection;
+          const { id } = response.data.collection;
           const { deployContractTxHex } = response.data;
           setCollectionId(id);
           console.log("create collection success", response);
           toast.success("Create collection success.");
 
-          if (currentLayer.layer === "CITREA") {
-            const { signer } = await getSigner();
-            const signedTx = await signer?.sendTransaction(deployContractTxHex);
-            await signedTx?.wait();
-            if (signedTx?.hash) setTxid(signedTx?.hash);
-          }
+          // if (currentLayer.layer === "EDUCHAIN") {
+          //   const { signer } = await getSigner();
+          //   const signedTx = await signer?.sendTransaction(deployContractTxHex);
+          //   await signedTx?.wait();
+          //   if (signedTx?.hash) setTxid(signedTx?.hash);
+          // }
 
           setStep(1);
         }
@@ -296,6 +308,39 @@ const Inscription = () => {
 
   const files = imageFiles.map((image) => image.file);
 
+  const handleMintfeeChange = async () => {
+    if (!currentLayer) {
+      toast.error("Layer information not available");
+      return false;
+    }
+    setIsLoading(true);
+    try {
+      const params: MintFeeType = {
+        collectionTxid:
+          "0x41aad9ebeee10d124f4abd123d1fd41dbb80162e339e9d61db7e90dd6139e89e",
+        mintFee: POMintPrice.toString(),
+      };
+      const response = await mintFeeOfCitreaMutation({ data: params });
+      if (response && response.success) {
+        const { singleMintTxHex } = response.data;
+        console.log("create collection success", response);
+        toast.success("Create collection success.");
+
+        if (currentLayer.layer === "EDUCHAIN") {
+          const { signer } = await getSigner();
+          const signedTx = await signer?.sendTransaction(singleMintTxHex);
+          await signedTx?.wait();
+        }
+        setStep(2);
+      }
+    } catch (error) {
+      toast.error("Error creating launch.");
+      console.error("Error creating launch: ", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleCreateLaunch = async () => {
     setIsLoading(true);
     const poStartsAt = calculateTimeUntilDate(POStartsAtDate, POStartsAtTime);
@@ -304,7 +349,7 @@ const Inscription = () => {
     try {
       const batchSize = 10;
       const totalBatches = Math.ceil(files.length / batchSize);
-      const params: LaunchParams = {
+      const params: LaunchType = {
         collectionId: collectionId,
         isWhitelisted: false,
         poStartsAt: poStartsAt,
@@ -318,9 +363,7 @@ const Inscription = () => {
         // Launch the collection
         const launchResponse = await createLaunchMutation({
           data: params,
-          txid: txid,
-          totalFileSize: totalFileSize,
-          feeRate: 1,
+          txid: "0x41aad9ebeee10d124f4abd123d1fd41dbb80162e339e9d61db7e90dd6139e89e",
         });
 
         if (!launchResponse?.data?.launch?.collectionId) {
@@ -328,26 +371,19 @@ const Inscription = () => {
         }
 
         const launchCollectionId = launchResponse.data.launch.collectionId;
-        console.log("Launch Collection ID:", launchCollectionId);
-
         // Process files in batches
         for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
           const start = batchIndex * batchSize;
           const end = Math.min(start + batchSize, files.length);
           const currentBatchFiles = files.slice(start, end);
 
-          const names = currentBatchFiles.map(
-            (_, index) => `${name.replace(/\s+/g, "")}-${start + index + 1}`
-          );
-
-          const launchItemsData: CreateLaunchParams = {
+          const launchItemsData: LaunchItemType = {
             files: currentBatchFiles,
-            names: names,
             collectionId: launchCollectionId,
             isLastBatch: batchIndex === totalBatches - 1,
           };
 
-          const response = await launchItemsMutation({ data: launchItemsData });
+          const response = await launchItemMutation({ data: launchItemsData });
 
           if (!response?.success) {
             throw new Error(`Failed to process batch ${batchIndex + 1}`);
@@ -381,84 +417,84 @@ const Inscription = () => {
     reset();
   };
 
-  const handlePay = async () => {
-    if (!currentLayer) {
-      toast.error("Layer information not available");
-      return false;
-    }
+  // const handlePay = async () => {
+  //   if (!currentLayer) {
+  //     toast.error("Layer information not available");
+  //     return false;
+  //   }
 
-    setIsLoading(true);
+  //   setIsLoading(true);
 
-    // Process files in batches of 10
-    const batchSize = 10;
-    const totalBatches = Math.ceil(files.length / batchSize);
-    try {
-      if (collectionId && authState.userLayerId && totalFileSize) {
-        const response = await createOrder({
-          collectionId: collectionId,
-          feeRate: 1,
-          txid: txid,
-          userLayerId: authState.userLayerId,
-          totalFileSize: totalFileSize,
-          totalCollectibleCount: files.length,
-        });
-        if (response && response.success) {
-          let id;
-          await window.unisat.sendBitcoin(
-            response.data.order.fundingAddress,
-            Math.ceil(response.data.order.fundingAmount)
-          );
+  //   // Process files in batches of 10
+  //   const batchSize = 10;
+  //   const totalBatches = Math.ceil(files.length / batchSize);
+  //   try {
+  //     if (collectionId && authState.userLayerId && totalFileSize) {
+  //       const response = await createOrder({
+  //         collectionId: collectionId,
+  //         feeRate: 1,
+  //         txid: txid,
+  //         userLayerId: authState.userLayerId,
+  //         totalFileSize: totalFileSize,
+  //         totalCollectibleCount: files.length,
+  //       });
+  //       if (response && response.success) {
+  //         let id;
+  //         await window.unisat.sendBitcoin(
+  //           response.data.order.fundingAddress,
+  //           Math.ceil(response.data.order.fundingAmount)
+  //         );
 
-          id = response.data.order.id;
-          setData(response.data.order.id);
+  //         id = response.data.order.id;
+  //         setData(response.data.order.id);
 
-          await new Promise((resolve) => setTimeout(resolve, 2000));
+  //         await new Promise((resolve) => setTimeout(resolve, 2000));
 
-          for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
-            // Get the current batch of files
-            const start = batchIndex * batchSize;
-            const end = Math.min(start + batchSize, files.length);
-            const currentBatchFiles = files.slice(start, end);
+  //         for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+  //           // Get the current batch of files
+  //           const start = batchIndex * batchSize;
+  //           const end = Math.min(start + batchSize, files.length);
+  //           const currentBatchFiles = files.slice(start, end);
 
-            const names = currentBatchFiles.map(
-              (_, index) => `${name.replace(/\s+/g, "")}-${start + index + 1}`
-            );
-            const params: InscriptionCollectible = {
-              files: currentBatchFiles,
-              collectionId: collectionId,
-              names: names, // Total count of all files
-            };
+  //           const names = currentBatchFiles.map(
+  //             (_, index) => `${name.replace(/\s+/g, "")}-${start + index + 1}`
+  //           );
+  //           const params: InscriptionCollectible = {
+  //             files: currentBatchFiles,
+  //             collectionId: collectionId,
+  //             names: names, // Total count of all files
+  //           };
 
-            const colRes = await inscriptionMutation({ data: params });
+  //           const colRes = await inscriptionMutation({ data: params });
 
-            if (colRes && colRes.success) {
-              // Small delay between batches to prevent rate limiting
-              if (batchIndex < totalBatches - 1) {
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-              }
+  //           if (colRes && colRes.success) {
+  //             // Small delay between batches to prevent rate limiting
+  //             if (batchIndex < totalBatches - 1) {
+  //               await new Promise((resolve) => setTimeout(resolve, 1000));
+  //             }
 
-              // // Store the last successful order ID
-              // setData(colRes.data.order.id);
-            }
+  //             // // Store the last successful order ID
+  //             // setData(colRes.data.order.id);
+  //           }
 
-            console.log("Batch upload index: ", batchIndex);
-          }
+  //           console.log("Batch upload index: ", batchIndex);
+  //         }
 
-          const orderRes = await invokeOrderMutation({
-            id: response.data.order.id,
-          });
-          if (orderRes && orderRes.success) {
-            toggleSuccessModal();
-          }
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to create order");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //         const orderRes = await invokeOrderMutation({
+  //           id: response.data.order.id,
+  //         });
+  //         if (orderRes && orderRes.success) {
+  //           toggleSuccessModal();
+  //         }
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error("Failed to create order");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
     <Layout>
@@ -551,56 +587,6 @@ const Inscription = () => {
             </div>
           )}
           {step == 1 && (
-            <div className="w-[592px] items-start flex flex-col gap-16">
-              <div className="flex flex-col w-full gap-8">
-                <p className="font-bold text-profileTitle text-neutral50">
-                  Upload your Collection
-                </p>
-                {imageFiles.length !== 0 ? (
-                  <div className="flex flex-row w-full h-full gap-8 overflow-x-auto">
-                    {imageFiles.map((item, index) => (
-                      <div key={index} className="w-full h-full">
-                        <CollectiblePreviewCard
-                          image={item.preview}
-                          key={index}
-                          title={item.file.name}
-                          onDelete={handleDeleteLogo}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <CollectionUploadFile
-                    text="Accepted file types: WEBP (recommended), JPEG, PNG, SVG, and GIF."
-                    handleImageUpload={handleUploadChange}
-                  />
-                )}
-              </div>
-              <div className="flex flex-row w-full gap-8">
-                <ButtonOutline title="Back" onClick={handleBack} />
-                <Button
-                  className="flex w-full border border-neutral400 rounded-xl text-neutral600 bg-brand font-bold items-center justify-center"
-                  // type="submit"
-                  onClick={() => setStep(2)}
-                  // isLoading={isLoading}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <Loader2
-                      className="animate-spin w-full"
-                      color="#111315"
-                      size={24}
-                    />
-                  ) : (
-                    "Continue"
-                  )}
-
-                  {/* {isLoading ? "...loading" : "Continue"} */}
-                </Button>
-              </div>
-            </div>
-          )}
-          {step == 2 && (
             <div className="w-[592px] items-start flex flex-col gap-16">
               <div className="flex flex-col w-full gap-4">
                 <div className="flex flex-row justify-between items-center">
@@ -741,7 +727,7 @@ const Inscription = () => {
               <div className="flex flex-row w-full gap-8">
                 <ButtonOutline title="Back" onClick={handleBack} />
                 <Button
-                  onClick={() => setStep(3)}
+                  onClick={() => setStep(2)}
                   // isLoading={isLoading}
                   disabled={isLoading}
                   className="flex items-center   border border-neutral400 rounded-xl text-neutral600 bg-brand font-bold  w-full justify-center"
@@ -755,6 +741,56 @@ const Inscription = () => {
                   ) : (
                     "Continue"
                   )}
+                </Button>
+              </div>
+            </div>
+          )}
+          {step == 2 && (
+            <div className="w-[592px] items-start flex flex-col gap-16">
+              <div className="flex flex-col w-full gap-8">
+                <p className="font-bold text-profileTitle text-neutral50">
+                  Upload your Collection
+                </p>
+                {imageFiles.length !== 0 ? (
+                  <div className="flex flex-row w-full h-full gap-8 overflow-x-auto">
+                    {imageFiles.map((item, index) => (
+                      <div key={index} className="w-full h-full">
+                        <CollectiblePreviewCard
+                          image={item.preview}
+                          key={index}
+                          title={item.file.name}
+                          onDelete={handleDeleteLogo}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <CollectionUploadFile
+                    text="Accepted file types: WEBP (recommended), JPEG, PNG, SVG, and GIF."
+                    handleImageUpload={handleUploadChange}
+                  />
+                )}
+              </div>
+              <div className="flex flex-row w-full gap-8">
+                <ButtonOutline title="Back" onClick={handleBack} />
+                <Button
+                  className="flex w-full border border-neutral400 rounded-xl text-neutral600 bg-brand font-bold items-center justify-center"
+                  // type="submit"
+                  onClick={() => setStep(3)}
+                  // isLoading={isLoading}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <Loader2
+                      className="animate-spin w-full"
+                      color="#111315"
+                      size={24}
+                    />
+                  ) : (
+                    "Continue"
+                  )}
+
+                  {/* {isLoading ? "...loading" : "Continue"} */}
                 </Button>
               </div>
             </div>
@@ -839,7 +875,7 @@ const Inscription = () => {
               <div className="flex flex-row gap-8">
                 <ButtonOutline title="Back" onClick={handleBack} />
                 <Button
-                  onClick={isChecked ? handleCreateLaunch : handlePay}
+                  onClick={handleCreateLaunch}
                   // isLoading={isLoading}
                   disabled={isLoading}
                   className="flex justify-center border border-neutral400 rounded-xl text-neutral600 bg-brand font-bold  w-full items-center"
@@ -860,7 +896,7 @@ const Inscription = () => {
           )}
         </div>
       </div>
-      <OrderPayModal
+      {/* <OrderPayModal
         open={payModal}
         onClose={togglePayModal}
         fileTypeSizes={fileTypeSizes}
@@ -872,7 +908,7 @@ const Inscription = () => {
         hash={
           "0x41aad9ebeee10d124f4abd123d1fd41dbb80162e339e9d61db7e90dd6139e89e"
         }
-      />
+      /> */}
       <SuccessModal
         open={successModal}
         onClose={toggleSuccessModal}
