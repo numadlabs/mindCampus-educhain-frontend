@@ -41,7 +41,7 @@ export default function ColDetailCard({ data }: { data: CollectionDataType }) {
                       </p>
                       <p className="text-neutral50">
                         {formatPrice(data.price)}
-                        <span className="ml-1">Edu</span>
+                        <span className="ml-1">EDU</span>
                       </p>
                     </>
                   ) : (

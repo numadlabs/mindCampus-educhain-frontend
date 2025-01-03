@@ -50,7 +50,7 @@ const AssetsCard: React.FC<CardProps> = ({ data }) => {
                       </p>
                       <p className="text-neutral50 group-hover:hidden">
                         {formatPrice(data.price ?? 0)}
-                        <span className="ml-1">Edu</span>
+                        <span className="ml-1">EDU</span>
                       </p>
                     </>
                   ) : (

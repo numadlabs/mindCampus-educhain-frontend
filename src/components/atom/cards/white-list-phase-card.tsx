@@ -97,7 +97,7 @@ const WhiteListPhaseCard: React.FC<PhaseCardItemProps> = ({
             {mintPrice !== undefined && (
               <p className="text-neutral50">
                 <span className="mr-1">{mintPrice}</span>
-                Edu
+                EDU
               </p>
             )}
           </div>

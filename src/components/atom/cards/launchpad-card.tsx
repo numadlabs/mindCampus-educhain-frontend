@@ -105,7 +105,7 @@ const LaunchpadCard: React.FC<LaunchProps> = ({ data, id }) => {
           </p>
           <p className="font-bold text-sm sm:text-md text-neutral50">
             {formatPrice(data.poMintPrice)}
-            <span className="ml-1">Edu</span>
+            <span className="ml-1">EDU</span>
           </p>
         </div>
         <div className="flex h-2 mt-1 border border-white8 rounded-lg border-1">

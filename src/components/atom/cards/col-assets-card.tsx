@@ -64,7 +64,7 @@ const ColAssetsCards: React.FC<cardProps> = ({ data }) => {
           <div className="w-[200px] grid gap-1 h-[18px]">
             <p className="font-medium text-lg text-neutral50">
               {formatPrice(data.floor)}
-              <span className="ml-1">Edu</span>
+              <span className="ml-1">EDU</span>
             </p>
             <p>
               {" "}

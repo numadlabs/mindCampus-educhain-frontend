@@ -690,7 +690,7 @@ const Badge = () => {
                       </div>
                       <div className="absolute right-4">
                         <p className="text-md text-neutral200 font-medium">
-                          Edu
+                          EDU
                         </p>
                       </div>
                     </div>
