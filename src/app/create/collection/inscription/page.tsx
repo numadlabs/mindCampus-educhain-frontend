@@ -215,12 +215,12 @@ const Inscription = () => {
           console.log("create collection success", response);
           toast.success("Create collection success.");
 
-          // if (currentLayer.layer === "EDUCHAIN") {
-          //   const { signer } = await getSigner();
-          //   const signedTx = await signer?.sendTransaction(deployContractTxHex);
-          //   await signedTx?.wait();
-          //   if (signedTx?.hash) setTxid(signedTx?.hash);
-          // }
+          if (currentLayer.layer === "EDUCHAIN") {
+            const { signer } = await getSigner();
+            const signedTx = await signer?.sendTransaction(deployContractTxHex);
+            await signedTx?.wait();
+            if (signedTx?.hash) setTxid(signedTx?.hash);
+          }
 
           setStep(1);
         }
@@ -316,11 +316,13 @@ const Inscription = () => {
     setIsLoading(true);
     try {
       const params: MintFeeType = {
-        collectionTxid:
-          "0x41aad9ebeee10d124f4abd123d1fd41dbb80162e339e9d61db7e90dd6139e89e",
+        collectionTxid: txid,
         mintFee: POMintPrice.toString(),
       };
-      const response = await mintFeeOfCitreaMutation({ data: params });
+      const response = await mintFeeOfCitreaMutation({
+        data: params,
+        userLayerId: authState.userLayerId,
+      });
       if (response && response.success) {
         const { singleMintTxHex } = response.data;
         console.log("create collection success", response);
@@ -363,7 +365,7 @@ const Inscription = () => {
         // Launch the collection
         const launchResponse = await createLaunchMutation({
           data: params,
-          txid: "0x41aad9ebeee10d124f4abd123d1fd41dbb80162e339e9d61db7e90dd6139e89e",
+          txid: txid,
         });
 
         if (!launchResponse?.data?.launch?.collectionId) {
@@ -727,7 +729,7 @@ const Inscription = () => {
               <div className="flex flex-row w-full gap-8">
                 <ButtonOutline title="Back" onClick={handleBack} />
                 <Button
-                  onClick={() => setStep(2)}
+                  onClick={handleMintfeeChange}
                   // isLoading={isLoading}
                   disabled={isLoading}
                   className="flex items-center   border border-neutral400 rounded-xl text-neutral600 bg-brand font-bold  w-full justify-center"

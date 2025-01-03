@@ -72,7 +72,7 @@ export const WALLET_CONFIGS: { [key: string]: WalletConfig } = {
       TESTNET: {
         chainId: "0xa045c", // Added chainId here as well for consistency
         chainName: "EDU Chain Testnet",
-        rpcUrls: ["https://rpc.open-campus-codex.gelato.digital"],
+        rpcUrls: ["https://open-campus-codex-sepolia.drpc.org"],
         blockExplorerUrls: ["https://edu-chain-testnet.blockscout.com"],
       },
     },
