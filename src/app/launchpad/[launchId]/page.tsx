@@ -32,6 +32,7 @@ import { Global } from "iconsax-react";
 import DiscordIcon from "@/components/icon/hoverIcon";
 import ThreadIcon from "@/components/icon/thread";
 import { LaunchsDetailSchema } from "@/lib/validations/launchpad-validation";
+import { ethers } from "ethers";
 
 const Page = () => {
   const queryClient = useQueryClient();
@@ -117,21 +118,38 @@ const Page = () => {
         // }
         // if (orderId) {
 
-        const { singleMintTxHex } = response.data;
+        // const { singleMintTxHex } = response.data;
         console.log("create collection success", response);
         // toast.success("Create collection success.");
 
-        if (currentLayer.layer === "EDUCHAIN") {
-          const { signer } = await getSigner();
-          const signedTx = await signer?.sendTransaction(singleMintTxHex);
-          await signedTx?.wait();
-          if (signedTx?.hash) {
-            txid = signedTx.hash;
-          }
+        // if (currentLayer.layer === "EDUCHAIN") {
+        //   const signedTx = await signer?.sendTransaction(singleMintTxHex);
+        //   await signedTx?.wait();
+        //   if (signedTx?.hash) {
+        //     txid = signedTx.hash;
+        //   }
+        // }
+
+        const { signer } = await getSigner();
+        if (!signer) {
+          throw new Error("signer not available");
         }
+        const amount = collectibles.data.poMintPrice;
+        const tx = {
+          to: "0x4a3A744DD6Bb638498daC3702F36ABE609676614",
+          value: ethers.parseEther(amount),
+          nonce: await signer.getNonce(),
+          gasLimit: "21000", // Standard transfer
+          // gasPrice: await signer.getGasPrice
+        };
+
+        // Sign transaction
+        const signedTx = await signer.signTransaction(tx);
+
+        console.log(signedTx);
         orderRes = await confirmOrderMutation({
           orderId: null,
-          txid: txid,
+          txid: signedTx,
           launchItemId: launchItemId,
           userLayerId: authState.userLayerId,
         });
