@@ -169,7 +169,7 @@ const useWalletStore = create<WalletStore>()(
             address = await connectUnisat();
             const msgResponse = await generateMessageHandler({ address });
             signedMessage = await window.unisat.signMessage(
-              msgResponse.data.message,
+              msgResponse.data.message
             );
             pubkey = await window.unisat.getPublicKey();
           } else {
@@ -198,7 +198,7 @@ const useWalletStore = create<WalletStore>()(
                   address,
                   layerId,
                   signedMessage,
-                }),
+                })
               );
               throw new Error("WALLET_ALREADY_LINKED");
             }
@@ -309,7 +309,7 @@ const useWalletStore = create<WalletStore>()(
 
         set((state) => ({
           connectedWallets: state.connectedWallets.filter(
-            (w) => w.layerId !== layerId,
+            (w) => w.layerId !== layerId
           ),
         }));
 
@@ -516,8 +516,8 @@ const useWalletStore = create<WalletStore>()(
     }),
     {
       name: "wallet-storage",
-    },
-  ),
+    }
+  )
 );
 
 export default useWalletStore;

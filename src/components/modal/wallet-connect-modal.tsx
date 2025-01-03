@@ -70,16 +70,12 @@ export function WalletConnectionModal({
 
   const getLayerImage = (layer: string) => {
     switch (layer) {
-      case "BITCOIN":
-        return "/wallets/Bitcoin.png";
-      case "FRACTAL":
-        return "/wallets/Fractal.png";
       case "CITREA":
         return "/wallets/Citrea.png";
-      case "NUBIT":
-        return "/wallets/nubit.webp";
+      case "EDUCHAIN":
+        return "/wallets/EduChain.png";
       default:
-        return "/wallets/Citrea.png";
+        return "/wallets/EduChain.png";
     }
   };
 
