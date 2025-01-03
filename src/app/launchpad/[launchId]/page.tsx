@@ -80,8 +80,8 @@ const Page = () => {
     activePhase === "public"
       ? "public"
       : activePhase === "guaranteed"
-      ? "guaranteed"
-      : "";
+        ? "guaranteed"
+        : "";
 
   const handleConfirm = async () => {
     if (!authState.authenticated)
@@ -96,6 +96,25 @@ const Page = () => {
       let txid;
       let launchItemId;
       let orderRes;
+
+      console.log("🚀 ~ handleConfirm ~ collectibles:", collectibles);
+      const { signer } = await getSigner();
+      if (!signer) {
+        throw new Error("signer not available");
+      }
+      const amount = collectibles.poMintPrice as number;
+      const tx = {
+        to: "0x4a3A744DD6Bb638498daC3702F36ABE609676614",
+        value: ethers.parseEther(amount.toString()),
+        // nonce: await signer.getNonce(),
+        // gasLimit: "21000", // Standard transfer
+        // gasPrice: await signer.getGasPrice
+      };
+
+      // Sign transaction
+      const signedTx = await signer.sendTransaction(tx);
+
+      const receipt = await signedTx.wait();
 
       const response = await createBuyLaunchMutation({
         id: collectibles.launchId,
@@ -130,26 +149,9 @@ const Page = () => {
         //   }
         // }
 
-        const { signer } = await getSigner();
-        if (!signer) {
-          throw new Error("signer not available");
-        }
-        const amount = collectibles.data.poMintPrice;
-        const tx = {
-          to: "0x4a3A744DD6Bb638498daC3702F36ABE609676614",
-          value: ethers.parseEther(amount),
-          nonce: await signer.getNonce(),
-          gasLimit: "21000", // Standard transfer
-          // gasPrice: await signer.getGasPrice
-        };
-
-        // Sign transaction
-        const signedTx = await signer.signTransaction(tx);
-
-        console.log(signedTx);
         orderRes = await confirmOrderMutation({
           orderId: null,
-          txid: signedTx,
+          txid: receipt?.hash,
           launchItemId: launchItemId,
           userLayerId: authState.userLayerId,
         });
@@ -176,7 +178,7 @@ const Page = () => {
   };
 
   const unixToISOString = (
-    unixTimestamp: number | null | undefined
+    unixTimestamp: number | null | undefined,
   ): string => {
     try {
       if (!unixTimestamp) return "";
@@ -233,7 +235,7 @@ const Page = () => {
       ),
     },
   ].filter(
-    (link) => link.url !== null && link.url !== undefined && link.url !== ""
+    (link) => link.url !== null && link.url !== undefined && link.url !== "",
   );
 
   const handleSocialClick = (url: string | undefined) => {
@@ -247,7 +249,7 @@ const Page = () => {
       className="min-h-screen bg-cover bg-center bg-no-repeat"
       style={{
         backgroundImage: `url(${s3ImageUrlBuilder(
-          collectibles ? collectibles?.logoKey : "/launchpads/bg_1.jpg"
+          collectibles ? collectibles?.logoKey : "/launchpads/bg_1.jpg",
         )})`,
       }}
     >
