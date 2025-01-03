@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CollectionDataType } from "@/lib/types";
-import { s3ImageUrlBuilder,formatPrice} from "@/lib/utils";
+import { s3ImageUrlBuilder, formatPrice } from "@/lib/utils";
 
 export default function ColDetailCard({ data }: { data: CollectionDataType }) {
   const isListed = data.price > 0;
@@ -41,7 +41,7 @@ export default function ColDetailCard({ data }: { data: CollectionDataType }) {
                       </p>
                       <p className="text-neutral50">
                         {formatPrice(data.price)}
-                        <span className="ml-1">cBTC</span>
+                        <span className="ml-1">Edu</span>
                       </p>
                     </>
                   ) : (

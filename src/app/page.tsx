@@ -171,16 +171,15 @@ export default function Home() {
             <div className="relative w-full md:w-auto">
               <Button
                 variant="outline"
-                className="w-full md:w-[200px] h-12 cursor-not-allowed"
+                className="w-full md:w-[200px] h-12"
                 onClick={handleNavigation}
-                disabled
               >
                 Create
               </Button>
-              <div className="absolute -top-3 -right-3 bg-brand text-neutral500 px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1">
+              {/* <div className="absolute -top-3 -right-3 bg-brand text-neutral500 px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1">
                 <span className="w-2 h-2 bg-neutral500 rounded-full animate-pulse"></span>
                 Coming Soon
-              </div>
+              </div> */}
             </div>
             <Link href="/collections" className="w-full md:w-auto">
               <Button variant="primary" className="w-full md:w-[200px] h-12">

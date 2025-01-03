@@ -179,9 +179,7 @@ const ProfileBanner: React.FC<CardProps> = ({ params }) => {
                       />
                       <p className="flex items-center font-bold text-lg md:text-xl text-white">
                         {formatPriceBtc(balance.amount)}{" "}
-                        {connectedWallet.layerType === "CITREA"
-                          ? "cBTC"
-                          : "BTC"}
+                        {connectedWallet.layerType === "CITREA" ? "Edu" : "Edu"}
                       </p>
                     </div>
                     <div className="h-6 w-[1px] bg-white16" />

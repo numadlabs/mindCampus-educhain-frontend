@@ -49,7 +49,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [selectedLayer, setSelectedLayer] = useState("CITREA");
-  const [defaultLayer, setDefaultLayer] = useState<string>("CITREA-mainnet");
+  const [defaultLayer, setDefaultLayer] = useState<string>("EDUCHAIN-TESTNET");
 
   const {
     authState,
@@ -98,19 +98,6 @@ export default function Header() {
     initializeDefaultLayer();
   }, [currentLayer, dynamicLayers, setSelectedLayerId]);
 
-  // Add static options
-  const staticLayers: (LayerType & { comingSoon?: boolean })[] = [
-    {
-      id: "static-1",
-      layer: "NUBIT",
-      name: "Nubit Testnet",
-      network: "TESTNET",
-      // createdAt: new Date().toISOString(),
-      // updatedAt: new Date().toISOString(),
-      comingSoon: true,
-    },
-  ];
-
   // // Filter out Bitcoin Testnet from dynamicLayers
   // const filteredDynamicLayers = dynamicLayers.filter(
   //   (layer) => !(layer.layer === "BITCOIN" && layer.network === "TESTNET")
@@ -119,7 +106,6 @@ export default function Header() {
   const layers: ExtendedLayerType[] = [
     // ...filteredDynamicLayers,
     ...dynamicLayers,
-    ...staticLayers,
   ];
 
   const routesData = [
@@ -193,8 +179,9 @@ export default function Header() {
     ? getWalletForLayer(selectedLayerId)
     : undefined;
 
-  const isAuthenticated =
-    selectedLayerId && !isWalletConnected(selectedLayerId);
+  const isAuthenticated = selectedLayerId
+    ? !isWalletConnected(selectedLayerId)
+    : true;
 
   return (
     <>

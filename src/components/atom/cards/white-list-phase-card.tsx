@@ -56,13 +56,19 @@ const WhiteListPhaseCard: React.FC<PhaseCardItemProps> = ({
 
   return (
     <button
-      className={`flex flex-col justify-between border ${isActive ? "border-brand" : "border-brand"} rounded-3xl p-5 gap-4 ${status === "Ended" ? "cursor-not-allowed" : "cursor-auto"} `}
+      className={`flex flex-col justify-between border ${
+        isActive ? "border-brand" : "border-brand"
+      } rounded-3xl p-5 gap-4 ${
+        status === "Ended" ? "cursor-not-allowed" : "cursor-auto"
+      } `}
       disabled={status === "Ended"}
       onClick={onClick}
     >
       <div className="flex justify-between w-full">
         <div className="flex flex-row gap-2 items-center bg-white8 px-3 py-2 text-md font-medium rounded-lg">
-          <p className={`${isActive ? "text-brand500" :  "text-neutral50"}`}>Guaranteed</p>
+          <p className={`${isActive ? "text-brand500" : "text-neutral50"}`}>
+            Guaranteed
+          </p>
           {status === "Ended" || status === "Starts in:" ? (
             <Lock1 size={16} color="#D7D8D8" />
           ) : (
@@ -71,7 +77,9 @@ const WhiteListPhaseCard: React.FC<PhaseCardItemProps> = ({
         </div>
         <div className="flex flex-row items-center gap-2 border bg-white8 border-transparent text-md rounded-lg px-3 py-2 text-neutral50">
           <span className="text-neutral100 font-medium text-md">{status}</span>
-          <span className="text-neutral50 font-medium text-md">{timeDisplay}</span>
+          <span className="text-neutral50 font-medium text-md">
+            {timeDisplay}
+          </span>
         </div>
       </div>
       {status === "Ended" ? (
@@ -89,7 +97,7 @@ const WhiteListPhaseCard: React.FC<PhaseCardItemProps> = ({
             {mintPrice !== undefined && (
               <p className="text-neutral50">
                 <span className="mr-1">{mintPrice}</span>
-                cBTC
+                Edu
               </p>
             )}
           </div>

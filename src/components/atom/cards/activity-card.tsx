@@ -2,11 +2,11 @@ import React from "react";
 import Image from "next/image";
 import { TickCircle, ArrowRight } from "iconsax-react";
 import { ActivityType } from "@/lib/types";
-import { truncateAddress,formatPrice } from "@/lib/utils";
+import { truncateAddress, formatPrice } from "@/lib/utils";
 import moment from "moment";
 
 interface cardProps {
-  imageUrl:string;
+  imageUrl: string;
   data: ActivityType;
   collectionName: string;
 }
@@ -34,8 +34,6 @@ const ActivityCard: React.FC<cardProps> = ({
       return `${diffDays}d`;
     }
   };
-
-
 
   return (
     <div className="flex flex-row items-center p-3 bg-gray50 rounded-2xl whitespace-nowrap">
@@ -65,7 +63,7 @@ const ActivityCard: React.FC<cardProps> = ({
             : data?.price / 10 ** 18}{" "}
           {data?.activityType === "MINTED" || data?.activityType === "TRANSFER"
             ? ""
-            : "cBTC"}
+            : "Edu"}
         </p>
         <p className="text-sm text-neutral200 font-medium">
           {data?.activityType === "MINTED" || data?.activityType === "TRANSFER"
