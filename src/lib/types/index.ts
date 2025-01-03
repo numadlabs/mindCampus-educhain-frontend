@@ -351,18 +351,17 @@ export type LayerTypes = {
 };
 
 export type LaunchType = {
-  colletionId: string;
+  collectionId: string | null;
   isWhitelisted: boolean;
   poStartsAt: number;
   poEndsAt: number;
   poMintPrice: number;
   poMaxMintPerWallet: number;
-  userLayerId: string;
+  userLayerId: string | null;
 };
 
-export type CreateLaunchType = {
-  data: LaunchType;
-  txid: string;
-  badge?: File[];
-  badgeSupply?: number;
+export type LaunchItemType = {
+  files: File[];
+  collectionId: string;
+  isLastBach: boolean;
 };
