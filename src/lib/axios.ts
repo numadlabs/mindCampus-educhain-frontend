@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 export const BACKEND_URL =
   process.env.NODE_ENV === "development"
-    ? "http://localhost:3001" // development api
+    ? "http://localhost:3000" // development api
     : // ? "https://mintpark-educhain-staging-48deaee7e972.herokuapp.com/" // development api
       "https://mintpark-educhain-production-e3f16eaac042.herokuapp.com/";
 
@@ -38,7 +38,7 @@ export const initializeAxios = (logoutHandler: () => void) => {
     },
     (error) => {
       return Promise.reject(error);
-    }
+    },
   );
 
   instance.interceptors.response.use(
@@ -56,7 +56,7 @@ export const initializeAxios = (logoutHandler: () => void) => {
             `${BACKEND_URL}/api/v1/users/refreshToken`,
             {
               refreshToken: getRefreshToken(),
-            }
+            },
           );
 
           if (res.status === 200) {
@@ -73,7 +73,7 @@ export const initializeAxios = (logoutHandler: () => void) => {
       }
 
       return error.response;
-    }
+    },
   );
 };
 const cache = new LRUCache({ max: 10 });
