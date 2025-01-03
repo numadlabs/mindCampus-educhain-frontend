@@ -155,6 +155,7 @@ const SingleCollectible = () => {
         type: "INSCRIPTION",
         userLayerId: authState.userLayerId,
         layerId: authState.layerId,
+        isBadge: false,
       };
       if (collectionParams) {
         let collectionTxid;

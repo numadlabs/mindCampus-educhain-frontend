@@ -49,7 +49,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [walletModalOpen, setWalletModalOpen] = useState(false);
   const [selectedLayer, setSelectedLayer] = useState("CITREA");
-  const [defaultLayer, setDefaultLayer] = useState<string>("EDUCHAIN-TESTNET");
+  const [defaultLayer, setDefaultLayer] = useState<string>("Edu Chain Testnet");
 
   const {
     authState,
@@ -77,7 +77,7 @@ export default function Header() {
   useEffect(() => {
     const initializeDefaultLayer = () => {
       if (currentLayer) {
-        const layerString = `${currentLayer.layer}-${currentLayer.network}`;
+        const layerString = `${currentLayer.name}`;
         setDefaultLayer(layerString);
         if (currentLayer.price) {
           storePriceData(currentLayer.price);
@@ -87,7 +87,7 @@ export default function Header() {
           (l: LayerType) => l.layer === "CITREA"
         );
         if (citreaLayer) {
-          const layerString = `${citreaLayer.layer}-${citreaLayer.network}`;
+          const layerString = `${citreaLayer.name}`;
           setDefaultLayer(layerString);
           setSelectedLayerId(citreaLayer.id);
           setSelectedLayer(citreaLayer.id);
@@ -130,7 +130,7 @@ export default function Header() {
       case "EDUCHAIN":
         return "/wallets/EduChain.png";
       default:
-        return "/wallets/Citrea.png";
+        return "/wallets/EduChain.png";
     }
   };
 
@@ -229,7 +229,7 @@ export default function Header() {
                 </span>
               </button> */}
                 <Select onValueChange={handleLayerSelect} value={defaultLayer}>
-                  <SelectTrigger className="flex flex-row items-center h-10 border border-transparent bg-white8 hover:bg-white16 duration-300 transition-all text-md font-medium text-neutral50 rounded-xl max-w-[200px] w-full">
+                  <SelectTrigger className="flex flex-row items-center h-10 border border-transparent bg-white8 hover:bg-white16 duration-300 transition-all text-md font-medium text-neutral50 rounded-xl max-w-[220px] w-full">
                     <SelectValue
                       placeholder="Select layer"
                       defaultValue={defaultLayer}
@@ -247,10 +247,7 @@ export default function Header() {
                             width={24}
                             height={24}
                           />
-                          {defaultLayer
-                            .split("-")
-                            .map(capitalizeFirstLetter)
-                            .join(" ")}
+                          {defaultLayer}
                         </div>
                       ) : (
                         <span>Select layer</span>
@@ -262,7 +259,7 @@ export default function Header() {
                       {layers.map((layer: ExtendedLayerType) => (
                         <SelectItem
                           key={layer.id}
-                          value={`${layer.layer}-${layer.network}`}
+                          value={`${layer.layer}`}
                           className={`flex flex-row items-center gap-2 w-[170px] ${
                             layer.comingSoon
                               ? "opacity-80 cursor-not-allowed"
@@ -277,14 +274,7 @@ export default function Header() {
                               height={24}
                             />
                             <div className="flex items-center gap-2">
-                              {`${capitalizeFirstLetter(
-                                layer.layer
-                              )} ${capitalizeFirstLetter(layer.network)}`}
-                              {layer.comingSoon && (
-                                <span className="text-xs bg-white8 px-2 py-1 rounded-full">
-                                  Soon
-                                </span>
-                              )}
+                              {`${layer.name}`}
                             </div>
                           </div>
                         </SelectItem>
