@@ -43,7 +43,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
-const Inscription = () => {
+const Badge = () => {
   const router = useRouter();
   const { authState, selectedLayerId } = useAuth();
   const {
@@ -188,10 +188,9 @@ const Inscription = () => {
         description: description,
         logo: imageFile[0],
         priceForLaunchpad: 0.001,
-        type: "IPFS",
+        type: "INSCRIPTION",
         userLayerId: authState.userLayerId,
         layerId: selectedLayerId,
-        isBadge: false,
       };
       if (params) {
         const response = await createCollectionMutation({ data: params });
@@ -882,4 +881,4 @@ const Inscription = () => {
   );
 };
 
-export default Inscription;
+export default Badge;

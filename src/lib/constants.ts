@@ -63,16 +63,17 @@ export const WALLET_CONFIGS: { [key: string]: WalletConfig } = {
       },
     },
   },
-  EDU: {
-    type: "educhain",
-    chainId: "656476", // 5115 in hex
+  EDUCHAIN: {
+    type: "metamask", // Changed from "educhain" to "metamask"
+    chainId: "0xa045c", // 656476 in hex
     name: "Edu",
     icon: "/wallets/EduChain.png",
     networks: {
       TESTNET: {
-        chainName: "Etherscan",
+        chainId: "0xa045c", // Added chainId here as well for consistency
+        chainName: "EDU Chain Testnet",
         rpcUrls: ["https://rpc.open-campus-codex.gelato.digital"],
-        blockExplorerUrls: ["https://edu-chain-testnet.blockscout.com/"],
+        blockExplorerUrls: ["https://edu-chain-testnet.blockscout.com"],
       },
     },
   },

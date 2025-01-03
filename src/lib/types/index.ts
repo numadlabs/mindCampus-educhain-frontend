@@ -133,6 +133,7 @@ export type CollectionData = {
   type: string;
   userLayerId: string | null;
   layerId: string | null;
+  isBadge: boolean;
 };
 
 export type FeeRateAmount = {
@@ -347,4 +348,21 @@ export type LayerTypes = {
   network: string;
   currencyId: string;
   comingSoon?: boolean;
+};
+
+export type LaunchType = {
+  colletionId: string;
+  isWhitelisted: boolean;
+  poStartsAt: number;
+  poEndsAt: number;
+  poMintPrice: number;
+  poMaxMintPerWallet: number;
+  userLayerId: string;
+};
+
+export type CreateLaunchType = {
+  data: LaunchType;
+  txid: string;
+  badge?: File[];
+  badgeSupply?: number;
 };

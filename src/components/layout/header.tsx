@@ -126,9 +126,8 @@ export default function Header() {
     {
       title: "Create",
       pageUrl: "/create",
-      requiresAuth: true,
-      disabled: true,
-      badge: "Soon",
+      requiresAuth: false,
+      disabled: false,
     },
     { title: "Launchpad", pageUrl: "/launchpad" },
     { title: "Collections", pageUrl: "/collections" },
@@ -142,14 +141,8 @@ export default function Header() {
 
   const getLayerImage = (layer: string) => {
     switch (layer) {
-      case "BITCOIN":
-        return "/wallets/Bitcoin.png";
-      case "FRACTAL":
-        return "/wallets/Fractal.png";
-      case "CITREA":
-        return "/wallets/Citrea.png";
-      case "NUBIT":
-        return "/wallets/nubit.webp";
+      case "EDUCHAIN":
+        return "/wallets/EduChain.png";
       default:
         return "/wallets/Citrea.png";
     }
@@ -232,7 +225,6 @@ export default function Header() {
                           )
                         }
                       />
-                      {item.badge && <Badge label={item.badge} />}
                     </div>
                   ))}
                 </div>
@@ -250,7 +242,7 @@ export default function Header() {
                 </span>
               </button> */}
                 <Select onValueChange={handleLayerSelect} value={defaultLayer}>
-                  <SelectTrigger className="flex flex-row items-center h-10 border border-transparent bg-white8 hover:bg-white16 duration-300 transition-all text-md font-medium text-neutral50 rounded-xl max-w-[190px] w-full">
+                  <SelectTrigger className="flex flex-row items-center h-10 border border-transparent bg-white8 hover:bg-white16 duration-300 transition-all text-md font-medium text-neutral50 rounded-xl max-w-[200px] w-full">
                     <SelectValue
                       placeholder="Select layer"
                       defaultValue={defaultLayer}
@@ -427,7 +419,6 @@ export default function Header() {
                     }
                   >
                     {item.title}
-                    {item.badge && <Badge label={item.badge} />}
                   </button>
                 </div>
               ))}

@@ -1,8 +1,9 @@
 import { NetworkConfig } from "@/types";
+import { WALLET_CONFIGS } from "./constants";
 
 // utils/wallet.ts
 export const setupEthereumChain = async (
-  networkConfig: NetworkConfig,
+  networkConfig: NetworkConfig
 ): Promise<void> => {
   if (!window.ethereum) {
     throw new Error("MetaMask not installed");
@@ -53,10 +54,37 @@ export const connectMetamask = async (chainId?: string | number) => {
             : `0x${parseInt(chainId).toString(16)}`
           : `0x${chainId.toString(16)}`;
 
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: hexChainId }],
-      });
+      try {
+        // First try to switch to the network
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: hexChainId }],
+        });
+      } catch (switchError: any) {
+        // This error code indicates that the chain has not been added to MetaMask
+        if (switchError.code === 4902) {
+          const networkConfig = WALLET_CONFIGS["EDUCHAIN"].networks.TESTNET;
+
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: hexChainId,
+                chainName: networkConfig.chainName,
+                rpcUrls: networkConfig.rpcUrls,
+                blockExplorerUrls: networkConfig.blockExplorerUrls,
+                nativeCurrency: {
+                  name: "EDU",
+                  symbol: "EDU",
+                  decimals: 18,
+                },
+              },
+            ],
+          });
+        } else {
+          throw switchError;
+        }
+      }
     }
 
     const accounts = await window.ethereum.request({
