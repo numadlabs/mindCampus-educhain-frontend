@@ -13,7 +13,7 @@ export const stringtoHex = (value: any) => {
 };
 
 export function s3ImageUrlBuilder(fileKey: string) {
-  return `https://d1orw8h9a3ark2.cloudfront.net/${fileKey}`;
+  return `https://d208xk9yeve6f2.cloudfront.net/${fileKey}`;
 }
 
 export function imageCDN(uniqueIdx: string) {
@@ -129,3 +129,5 @@ export const getPriceData = () => {
     return parseInt(citreaPrice);
   } else return 0;
 };
+
+export const BADGE_BATCH_SIZE = 25;

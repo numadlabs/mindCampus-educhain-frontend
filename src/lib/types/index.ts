@@ -125,8 +125,7 @@ export type CollectibleDataType = {
 };
 
 export type CollectionData = {
-  logo: File;
-  // creator: string;
+  logo?: File;
   description: string;
   name: string;
   priceForLaunchpad: number;
@@ -361,7 +360,7 @@ export type LaunchType = {
 };
 
 export type LaunchItemType = {
-  files: File[];
+  files?: File[];
   collectionId: string;
-  isLastBach: boolean;
+  isLastBatch?: boolean;
 };

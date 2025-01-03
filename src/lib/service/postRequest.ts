@@ -277,17 +277,26 @@ export async function createMintCollectible({
 export async function launchItems({ data }: { data: LaunchItemType }) {
   const formData = new FormData();
 
-  // Append files
-  data.files.forEach((file, index) => {
-    formData.append(`files`, file);
-    console.log(
-      `Appending file: ${file.name}, size: ${file.size}, type: ${file.type}`
-    );
-  });
+  // Append files if they exist
+  if (data.files && data.files.length > 0) {
+    data.files.forEach((file, index) => {
+      formData.append("files", file);
+      console.log(
+        `Appending file: ${file.name}, size: ${file.size}, type: ${file.type}`
+      );
+    });
+  }
 
   // Append other data
   formData.append("collectionId", data.collectionId);
-  formData.append("isLastBatch", data.isLastBatch.toString());
+
+  // Only append isLastBatch if it's defined
+  if (typeof data.isLastBatch !== "undefined") {
+    formData.append("isLastBatch", data.isLastBatch.toString());
+  } else {
+    // You might want to set a default value here
+    formData.append("isLastBatch", "false");
+  }
 
   console.log("FormData contents:");
   // Use Array.from() to convert the iterator to an array
@@ -419,18 +428,37 @@ export async function insriptionCollectible({
 export async function createLaunch({
   data,
   txid,
+  badge,
+  badgeSupply,
 }: {
   data: LaunchType;
   txid: string;
+  badge?: File;
+  badgeSupply?: number;
 }) {
   const formData = new FormData();
+
+  // Handle single file
+  if (badge instanceof File) {
+    formData.append("badge", badge);
+    console.log(
+      `Appending file: ${badge.name}, size: ${badge.size}, type: ${badge.type}`
+    );
+  } else if (badge) {
+    console.error("Invalid file:", badge);
+    throw new Error("Invalid file object provided");
+  }
 
   const dataLaunch = data;
   formData.append("data", JSON.stringify(dataLaunch));
 
   // Append other data
-  formData.append("txid", txid);
+  if (typeof badgeSupply !== "undefined") {
+    formData.append("badgeSupply", badgeSupply.toString());
+  }
 
+  // Append other data
+  formData.append("txid", txid);
   console.log("FormData contents:");
   // Use Array.from() to convert the iterator to an array
   Array.from(formData.keys()).forEach((key) => {
@@ -625,13 +653,13 @@ export async function confirmOrder({
   txid,
   launchItemId,
   userLayerId,
-  feeRate,
-}: {
-  orderId: string;
+}: // feeRate,/
+{
+  orderId: string | null;
   txid?: string | undefined;
   launchItemId: string;
   userLayerId: string;
-  feeRate: number;
+  // feeRate: number;
 }) {
   try {
     return axiosClient
@@ -640,7 +668,7 @@ export async function confirmOrder({
         txid,
         launchItemId,
         userLayerId,
-        feeRate,
+        // feeRate,
       })
       .then((response) => {
         return response.data;
@@ -894,11 +922,18 @@ export async function listCollectibleConfirm({
   }
 }
 
-export async function mintFeeOfCitrea({ data }: { data: MintFeeType }) {
+export async function mintFeeOfCitrea({
+  data,
+  userLayerId,
+}: {
+  data: MintFeeType;
+  userLayerId: string | null;
+}) {
   try {
     return axiosClient
       .post(`/api/v1/launchpad/change-mintfee-transaction`, {
         data,
+        userLayerId,
       })
       .then((response) => {
         return response.data;

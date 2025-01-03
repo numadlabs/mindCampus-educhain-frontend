@@ -103,33 +103,45 @@ const Page = () => {
       });
 
       if (response && response.success) {
-        const orderId = response.data.order.id;
+        // const orderId = response.data.order.id;
         launchItemId = response.data.launchItem.id;
         // const { singleMintTxHex } = response.data;
 
         // } else if (currentLayer.layer === "FRACTAL") {
-        await window.unisat.sendBitcoin(
-          response.data.order.fundingAddress,
-          Math.ceil(response.data.order.fundingAmount)
-        );
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+        // await window.unisat.sendBitcoin(
+        //   response.data.order.fundingAddress,
+        //   Math.ceil(response.data.order.fundingAmount)
+        // );
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // }
-        if (orderId) {
-          orderRes = await confirmOrderMutation({
-            orderId: orderId,
-            // txid: txid,
-            launchItemId: launchItemId,
-            userLayerId: authState.userLayerId,
-            feeRate: 1,
-          });
-          if (orderRes && orderRes.success) {
-            toast.success("Success minted.");
-            router.push("/launchpad");
-          } else {
-            toast.error("Failed to confirm order");
+        // if (orderId) {
+
+        const { singleMintTxHex } = response.data;
+        console.log("create collection success", response);
+        // toast.success("Create collection success.");
+
+        if (currentLayer.layer === "EDUCHAIN") {
+          const { signer } = await getSigner();
+          const signedTx = await signer?.sendTransaction(singleMintTxHex);
+          await signedTx?.wait();
+          if (signedTx?.hash) {
+            txid = signedTx.hash;
           }
         }
+        orderRes = await confirmOrderMutation({
+          orderId: null,
+          txid: txid,
+          launchItemId: launchItemId,
+          userLayerId: authState.userLayerId,
+        });
+        if (orderRes && orderRes.success) {
+          toast.success("Success minted.");
+          router.push("/launchpad");
+        } else {
+          toast.error("Failed to confirm order");
+        }
+        // }
       } else {
         // toast.error(response.error);
         toast.error(`Failed to create order ${response.error}`);

@@ -13,7 +13,8 @@ const nextConfig = {
       "d1orw8h9a3ark2.cloudfront.net",
       "images.unsplash.com",
       "static-testnet.unisat.io",
-      "ordinals-testnet.fractalbitcoin.io"  // Add this line
+      "ordinals-testnet.fractalbitcoin.io",
+      "d208xk9yeve6f2.cloudfront.net", // Add this line
     ],
   },
   i18n: {
