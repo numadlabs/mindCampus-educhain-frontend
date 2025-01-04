@@ -22,20 +22,13 @@ import {
 import { Wallet2, I3Dcube, Logout, ArrowRight2 } from "iconsax-react";
 import { Button } from "../ui/button";
 import { getAllLayers, getLayerById } from "@/lib/service/queryHelper";
-import {
-  truncateAddress,
-  capitalizeFirstLetter,
-  storePriceData,
-} from "@/lib/utils";
+import { truncateAddress, storePriceData } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { ExtendedLayerType, LayerType } from "@/lib/types";
 import { toast } from "sonner";
-import Badge from "../atom/badge";
 import { Loader2, MenuIcon } from "lucide-react";
 import XLogo from "../icon/xlogo";
-import useWalletAuth from "@/lib/hooks/useWalletAuth";
 import { WalletConnectionModal } from "../modal/wallet-connect-modal";
-import { STORAGE_KEYS } from "@/lib/constants";
 
 declare global {
   interface Window {
@@ -84,7 +77,7 @@ export default function Header() {
         }
       } else if (dynamicLayers.length > 0) {
         const citreaLayer = dynamicLayers.find(
-          (l: LayerType) => l.layer === "CITREA"
+          (l: LayerType) => l.layer === "EDUCHAIN"
         );
         if (citreaLayer) {
           const layerString = `${citreaLayer.name}`;
