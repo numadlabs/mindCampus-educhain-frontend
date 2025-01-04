@@ -176,9 +176,7 @@ export default function Header() {
     ? getWalletForLayer(selectedLayerId)
     : undefined;
 
-  const isAuthenticated = selectedLayerId
-    ? !isWalletConnected(selectedLayerId)
-    : true;
+  const isAuthenticated = authState.authenticated && currentWallet;
 
   return (
     <>
@@ -280,7 +278,7 @@ export default function Header() {
                   </SelectContent>
                 </Select>
 
-                {isAuthenticated ? (
+                {!isAuthenticated ? (
                   <Button
                     variant="secondary"
                     size="lg"
@@ -289,7 +287,7 @@ export default function Header() {
                   >
                     Connect Wallet
                   </Button>
-                ) : authState.authenticated && currentWallet ? (
+                ) : (
                   <DropdownMenu>
                     <DropdownMenuTrigger className="flex flex-row items-center gap-2 max-w-[136px] w-full bg-white8 hover:bg-white16 outline-none duration-300 transition-all p-2 rounded-xl backdrop-blur-xl">
                       <Image
@@ -331,7 +329,7 @@ export default function Header() {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                ) : null}
+                )}
               </div>
 
               {/* Mobile Menu Button */}
