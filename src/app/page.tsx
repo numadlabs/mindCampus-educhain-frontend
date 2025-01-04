@@ -236,7 +236,7 @@ export default function Home() {
         </div>
 
         {/* Services Section */}
-        <div className="w-full max-w-6xl mx-auto px-4">
+        {/* <div className="w-full max-w-6xl mx-auto px-4">
           <h2 className="font-bold text-center text-neutral00 text-3xl md:text-5xl mb-8 md:mb-12">
             Our service
           </h2>
@@ -282,6 +282,58 @@ export default function Home() {
               ))}
             </CarouselContent>
           </Carousel>
+        </div> */}
+
+        {/* FAQ Section */}
+        <div className="flex flex-col items-center gap-8 md:gap-12 w-full">
+          <h1 className="font-bold text-center text-neutral00 text-xl sm:text-3xl md:text-5xl px-4">
+            Frequently Asked Questions
+          </h1>
+          <div className="w-full max-w-[800px] px-4">
+            <Accordion
+              type="single"
+              collapsible
+              className="flex flex-col gap-4 md:gap-6"
+            >
+              {[
+                {
+                  question:
+                    "What is the Creator Program, and how does it work?",
+                  answer:
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi volutpat convallis velit at bibendum.",
+                },
+                {
+                  question:
+                    "What is a cross-chain marketplace, and why does it matter?",
+                  answer:
+                    "A Bitcoin cross-chain marketplace enables seamless trading of digital assets across different Bitcoin Layer 2 networks.",
+                },
+                {
+                  question: "What wallets and payment methods are supported?",
+                  answer:
+                    "We support industry-standard EVM wallets like MetaMask and WalletConnect.",
+                },
+                {
+                  question: 'What is "Collectible as a Service" (CaaS)?',
+                  answer:
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi volutpat convallis velit at bibendum.",
+                },
+              ].map((item, index) => (
+                <AccordionItem
+                  key={index}
+                  value={`item-${index + 1}`}
+                  className="border border-b-neutral500 py-3"
+                >
+                  <AccordionTrigger className="text-neutral00 text-start font-medium text-md md:text-xl px-4">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-neutral100 font-normal text-md md:text-lg px-4">
+                    {item.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
         </div>
 
         {/* Contact Forms Section */}
@@ -404,60 +456,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* FAQ Section */}
-        <div className="flex flex-col items-center gap-8 md:gap-12 w-full">
-          <h1 className="font-bold text-center text-neutral00 text-xl sm:text-3xl md:text-5xl px-4">
-            Frequently Asked Questions
-          </h1>
-          <div className="w-full max-w-[800px] px-4">
-            <Accordion
-              type="single"
-              collapsible
-              className="flex flex-col gap-4 md:gap-6"
-            >
-              {[
-                {
-                  question:
-                    "What is the Creator Program, and how does it work?",
-                  answer:
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi volutpat convallis velit at bibendum.",
-                },
-                {
-                  question:
-                    "What is a cross-chain marketplace, and why does it matter?",
-                  answer:
-                    "A Bitcoin cross-chain marketplace enables seamless trading of digital assets across different Bitcoin Layer 2 networks.",
-                },
-                {
-                  question: "What wallets and payment methods are supported?",
-                  answer:
-                    "We support industry-standard EVM wallets like MetaMask and WalletConnect.",
-                },
-                {
-                  question: 'What is "Collectible as a Service" (CaaS)?',
-                  answer:
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi volutpat convallis velit at bibendum.",
-                },
-              ].map((item, index) => (
-                <AccordionItem
-                  key={index}
-                  value={`item-${index + 1}`}
-                  className="border border-b-neutral500 py-3"
-                >
-                  <AccordionTrigger className="text-neutral00 text-start font-medium text-md md:text-xl px-4">
-                    {item.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-neutral100 font-normal text-md md:text-lg px-4">
-                    {item.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        </div>
-
         {/* About Section */}
-        <div className="flex flex-col items-center w-full gap-8 md:gap-16 mb-12">
+        {/* <div className="flex flex-col items-center w-full gap-8 md:gap-16 mb-12">
           <div className="relative w-full max-w-[320px] aspect-square">
             <div className="relative z-10 w-full h-full blur-[45px] md:blur-[90px] opacity-35">
               <Image
@@ -497,7 +497,7 @@ export default function Home() {
               Read about Citrea
             </Button>
           </div>
-        </div>
+        </div> */}
       </section>
     </Layout>
   );

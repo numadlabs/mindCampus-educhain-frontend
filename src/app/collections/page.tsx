@@ -21,6 +21,8 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import CollectionSkeleton from "@/components/atom/skeleton/collection-skeletion";
 import CollectionsBanner from "@/components/section/collections-banner";
+import Header from "@/components/layout/header";
+import LaunchpadBanner from "@/components/section/launchpad-banner";
 
 interface CollectionsProps {
   params: {};
@@ -81,11 +83,12 @@ export default function Collections({ searchParams }: CollectionsProps) {
 
   return (
     <>
-      <CollectionsBanner />
+      <Header />
+      <LaunchpadBanner />
       <Tabs
         value={selectedInterval}
         onValueChange={setSelectedInterval}
-        className="mt-4 px-4 lg:px-0 sm:mt-6 lg:mt-12 mb-6 sm:mb-8 lg:mb-10 border-hidden"
+        className="px-4 lg:px-0 mb-6 sm:mb-8 lg:mb-10 border-hidden"
       >
         <section className="flex flex-col justify-between md:flex-row gap-4 sm:gap-6 lg:gap-8 mb-4 sm:mb-6 lg:mb-7">
           {detail ? (
@@ -245,30 +248,32 @@ export default function Collections({ searchParams }: CollectionsProps) {
                     </div>
                   </div>
                 ) : (
-                  <div className="w-full min-w-[1216px]">
-                    <div className="sm:grid grid-cols-[2fr_3fr_2fr]  gap-6 px-4 pb-4 text-neutral200 font-medium text-sm sm:text-md">
-                      <div>Name</div>
-                      <div className="grid grid-cols-3 text-right">
-                        <span>Floor price</span>
-                        <span>Volume</span>
-                        <span>Market cap</span>
+                  <div className="overflow-x-auto w-full">
+                    <div className="w-full min-w-[1216px]">
+                      <div className="sm:grid grid-cols-[2fr_3fr_2fr]  gap-6 pl-4 pr-8 pb-4 text-neutral200 font-medium text-sm sm:text-md">
+                        <div>Name</div>
+                        <div className="grid grid-cols-3 text-right">
+                          <span>Floor price</span>
+                          <span>Volume</span>
+                          <span>Market cap</span>
+                        </div>
+                        <div className="grid grid-cols-3 text-right">
+                          <span>Sales</span>
+                          <span>Listed</span>
+                          <span>Owners</span>
+                        </div>
                       </div>
-                      <div className="grid grid-cols-3 text-right">
-                        <span>Sales</span>
-                        <span>Listed</span>
-                        <span>Owners</span>
-                      </div>
-                    </div>
-                    <div className="h-[500px] sm:h-[600px] lg:h-[754px] border-t-2 border-neutral500 w-full min-w-[1216px] overflow-y-auto">
-                      <div className="flex flex-col gap-4 pt-4 ">
-                        {collectionArray?.map((item: any) => (
-                          <div key={item.id}>
-                            <ColumColCard
-                              data={item}
-                              handleNav={() => handleNavigation(item)}
-                            />
-                          </div>
-                        ))}
+                      <div className="h-[500px] sm:h-[600px] lg:h-[754px] border-t-2 border-neutral500 w-full min-w-[1216px]">
+                        <div className="flex flex-col gap-4 pt-4 ">
+                          {collectionArray?.map((item: any) => (
+                            <div key={item.id}>
+                              <ColumColCard
+                                data={item}
+                                handleNav={() => handleNavigation(item)}
+                              />
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>

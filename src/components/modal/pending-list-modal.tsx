@@ -136,7 +136,8 @@ const PendingListModal: React.FC<ModalProps> = ({
             <div className="flex flex-col gap-6 w-full items-center justify-center">
               <div className="flex flex-col gap-6 justify-center items-center w-full">
                 <div className="flex justify-center p-3 items-center rounded-2xl bg-white8">
-                  <Check size={40} color="#FFEE32" />
+                  <Check size={40} color="#0FD577
+                  " />
                 </div>
                 <div className="flex flex-col gap-3">
                   <p className="text-center text-2xl text-brand font-bold">

@@ -2,6 +2,7 @@ import { Lock1 } from "iconsax-react";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import moment from "moment";
+import { EDUTOKEN_IMAGE } from "@/lib/constants";
 
 interface PhaseCardItemProps {
   maxMintPerWallet: number;
@@ -95,7 +96,7 @@ const PhaseCard: React.FC<PhaseCardItemProps> = ({
   return (
     <button
       className={`flex flex-col justify-between border ${
-        isActive ? "border-brand500" : "border-brand500"
+        isActive ? "border-brand" : "border-brand"
       } rounded-3xl p-5 gap-4 ${
         status === "Ended" ? "cursor-not-allowed" : "cursor-auto"
       } `}
@@ -104,9 +105,7 @@ const PhaseCard: React.FC<PhaseCardItemProps> = ({
     >
       <div className="flex justify-between w-full">
         <div className="flex flex-row gap-2 items-center bg-white8 px-3 py-2 text-md font-medium  rounded-lg">
-          <p className={`${isActive ? "text-brand500" : "text-brand500"}`}>
-            Public
-          </p>
+          <p className={`${isActive ? "text-brand" : "text-brand"}`}>Public</p>
           {status === "Ended" || status === "Starts in:" ? (
             <Lock1 size={16} color="#D7D8D8" />
           ) : (
@@ -128,7 +127,7 @@ const PhaseCard: React.FC<PhaseCardItemProps> = ({
             <Image
               width={20}
               height={20}
-              src="/detail_icon/Bitcoin.png"
+              src={EDUTOKEN_IMAGE}
               alt="Bitcoin icon"
               className="aspect-square h-5 w-5"
             />

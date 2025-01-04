@@ -23,11 +23,11 @@ const ColumColCard: React.FC<CardProps> = ({ data, handleNav }) => {
   return (
     <button
       onClick={handleNav}
-      className="w-full transition-colors collection bg-neutral500 bg-opacity-[50%] hover:bg-neutral400 hover:bg-opacity-[30%] rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:pr-8"
+      className="w-full min-w-[1216px] transition-colors bg-neutral500 bg-opacity-[50%] hover:bg-neutral400 hover:bg-opacity-[30%] rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:pr-8"
     >
-      <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 3xl:justify-between w-full sm:items-center">
+      <div className="sm:grid grid-cols-[2fr_3fr_2fr] w-full sm:items-center">
         {/* Collection Info */}
-        <div className="flex items-center gap-3 sm:gap-4 lg:gap-5 sm:w-[220px] lg:w-[376px]">
+        <div className="flex items-center gap-3 sm:gap-4 lg:gap-5 w-[376px]">
           <div className="relative w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 flex-shrink-0">
             <Image
               width={248}
@@ -43,7 +43,7 @@ const ColumColCard: React.FC<CardProps> = ({ data, handleNav }) => {
         </div>
 
         {/* Price Info */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-4 lg:gap-6 sm:w-[340px] lg:w-[468px] 3xl:w-[735px]">
+        <div className="grid grid-cols-3">
           {/* Floor Price */}
           <div className="text-right pr-2">
             <p className="font-medium text-sm sm:text-lg lg:text-lg text-neutral50">
@@ -79,7 +79,7 @@ const ColumColCard: React.FC<CardProps> = ({ data, handleNav }) => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-4 3xl:gap-36 text-right 3xl:text-start sm:w-[200px] lg:w-[324px] 3xl:w-[340px]">
+        <div className="grid grid-cols-3 text-right">
           <span className="font-medium text-sm sm:text-lg lg:text-lg text-neutral50">
             {data.soldCount}
           </span>

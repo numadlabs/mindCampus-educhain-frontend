@@ -135,7 +135,7 @@ export default function AssetDetail() {
                     <span className="font-bold text-neutral50 text-lg">
                       <h1>
                         {currentAsset.price && formatPrice(currentAsset.price)}{" "}
-                        Edu
+                        EDU
                       </h1>
                     </span>
                   </div>

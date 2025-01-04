@@ -135,15 +135,12 @@ export default function Header() {
   };
 
   const handleLayerSelect = (value: string) => {
-    const [layer, network] = value.split("-");
-    const selectedLayer = layers.find(
-      (l: LayerType) => l.layer === layer && l.network === network
-    );
+    const selectedLayer = layers.find((l: LayerType) => l.layer === value);
 
     if (selectedLayer) {
       setSelectedLayerId(selectedLayer.id);
-      setDefaultLayer(value);
-      setSelectedLayer(layer);
+      setDefaultLayer(selectedLayer.name);
+      setSelectedLayer(selectedLayer.layer);
     }
   };
 
@@ -259,7 +256,7 @@ export default function Header() {
                       {layers.map((layer: ExtendedLayerType) => (
                         <SelectItem
                           key={layer.id}
-                          value={`${layer.layer}`}
+                          value={`${layer.name}`}
                           className={`flex flex-row items-center gap-2 w-[170px] ${
                             layer.comingSoon
                               ? "opacity-80 cursor-not-allowed"

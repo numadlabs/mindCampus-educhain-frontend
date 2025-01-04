@@ -1,4 +1,5 @@
-8/** @type {import('tailwindcss').Config} */
+8;
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -63,13 +64,13 @@ module.exports = {
       },
       colors: {
         // brand: "#D3F85A",
-        brand: "#FFEE32",
+        brand: "#0FD577",
         brand50: "#FFFCD6",
         brand100: "#FFF9BB",
         brand200: "#FFF698",
         brand300: "#FFF476",
         brand400: "#FFF154",
-        brand500: "#FFEE32",
+        brand500: "#0FD577",
         brand600: "#D4C62A",
         brand700: "#AA9F21",
         brand800: "#807719",

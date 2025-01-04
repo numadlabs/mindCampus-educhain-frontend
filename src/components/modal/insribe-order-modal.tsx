@@ -176,7 +176,7 @@ const InscribeOrderModal: React.FC<modalProps> = ({
         <div className="flex flex-row justify-between items-center -4 w-full bg-white4 rounded-2xl p-4">
           <p className="text-lg text-neutral100 font-medium">Total Amount</p>
           <p className="text-lg text-brand font-bold">
-            {formatPrice(totalFee)} Edu
+            {formatPrice(totalFee)} EDU
           </p>
         </div>
         <div className="h-[1px] w-full bg-white8" />

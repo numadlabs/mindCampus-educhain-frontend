@@ -12,8 +12,8 @@ const bai_Jamjuree = Bai_Jamjuree({
 });
 
 export const metadata: Metadata = {
-  title: "Mint Park",
-  description: "Mint Park example app made for demo purpose",
+  title: "Mind Campus",
+  description: "Mind Campus example app made for demo purpose",
 };
 
 export default function RootLayout({
