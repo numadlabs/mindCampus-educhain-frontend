@@ -80,8 +80,8 @@ const Page = () => {
     activePhase === "public"
       ? "public"
       : activePhase === "guaranteed"
-        ? "guaranteed"
-        : "";
+      ? "guaranteed"
+      : "";
 
   const handleConfirm = async () => {
     if (!authState.authenticated)
@@ -178,7 +178,7 @@ const Page = () => {
   };
 
   const unixToISOString = (
-    unixTimestamp: number | null | undefined,
+    unixTimestamp: number | null | undefined
   ): string => {
     try {
       if (!unixTimestamp) return "";
@@ -235,7 +235,7 @@ const Page = () => {
       ),
     },
   ].filter(
-    (link) => link.url !== null && link.url !== undefined && link.url !== "",
+    (link) => link.url !== null && link.url !== undefined && link.url !== ""
   );
 
   const handleSocialClick = (url: string | undefined) => {
@@ -249,7 +249,7 @@ const Page = () => {
       className="min-h-screen bg-cover bg-center bg-no-repeat"
       style={{
         backgroundImage: `url(${s3ImageUrlBuilder(
-          collectibles ? collectibles?.logoKey : "/launchpads/bg_1.jpg",
+          collectibles ? collectibles?.logoKey : "/launchpads/bg_1.jpg"
         )})`,
       }}
     >

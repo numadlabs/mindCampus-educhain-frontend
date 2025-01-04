@@ -71,7 +71,7 @@ const SubmitPayModal: React.FC<ModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [collectionId, setCollectionId] = useState<string>("");
   const [selectedTab, setSelectedTab] = useState<"Slow" | "Fast" | "Custom">(
-    "Custom",
+    "Custom"
   );
   const [estimatedFee, setEstimatedFee] = useState<EstimatedFee>({
     networkFee: 0,
@@ -130,84 +130,84 @@ const SubmitPayModal: React.FC<ModalProps> = ({
     }
   }, [feeAmountMutation, feeRate, fileSizes, fileTypeSizes]);
 
-  const handlePay = async () => {
-    if (!currentLayer) {
-      toast.error("Layer information not available");
-      return false;
-    }
-    setIsLoading(true);
-    try {
-      const collectionParams: CollectionData = {
-        logo: files[0],
-        name: name,
-        // creator: creator,
-        description: description,
-        priceForLaunchpad: 0,
-        userLayerId: authState.userLayerId,
-        layerId: authState.layerId,
-        type: "INSCRIPTION",
-      };
-      if (collectionParams) {
-        let collectionTxid;
-        let collectionResponse = await createCollectionMutation({
-          data: collectionParams,
-        });
-        if (collectionResponse && collectionResponse.success) {
-          const { id } = collectionResponse.data.collection;
-          const { deployContractTxHex } = collectionResponse.data;
-          setCollectionId(id);
-          console.log("create collection success", collectionResponse);
+  // const handlePay = async () => {
+  //   if (!currentLayer) {
+  //     toast.error("Layer information not available");
+  //     return false;
+  //   }
+  //   setIsLoading(true);
+  //   try {
+  //     const collectionParams: CollectionData = {
+  //       logo: files[0],
+  //       name: name,
+  //       // creator: creator,
+  //       description: description,
+  //       priceForLaunchpad: 0,
+  //       userLayerId: authState.userLayerId,
+  //       layerId: authState.layerId,
+  //       type: "INSCRIPTION",
+  //     };
+  //     if (collectionParams) {
+  //       let collectionTxid;
+  //       let collectionResponse = await createCollectionMutation({
+  //         data: collectionParams,
+  //       });
+  //       if (collectionResponse && collectionResponse.success) {
+  //         const { id } = collectionResponse.data.collection;
+  //         const { deployContractTxHex } = collectionResponse.data;
+  //         setCollectionId(id);
+  //         console.log("create collection success", collectionResponse);
 
-          if (currentLayer.layer === "CITREA") {
-            const { signer } = await getSigner();
-            const signedTx = await signer?.sendTransaction(deployContractTxHex);
-            await signedTx?.wait();
-            if (signedTx?.hash) collectionTxid = signedTx?.hash;
-            console.log(signedTx);
-          }
-        }
-        const params: MintCollectibleDataType = {
-          // orderType: "COLLECTIBLE",
-          file: files,
-          // name: name,
-          // creator: creator,
-          feeRate: 1,
-          txid: collectionTxid,
-          collectionId: "",
-        };
+  //         if (currentLayer.layer === "CITREA") {
+  //           const { signer } = await getSigner();
+  //           const signedTx = await signer?.sendTransaction(deployContractTxHex);
+  //           await signedTx?.wait();
+  //           if (signedTx?.hash) collectionTxid = signedTx?.hash;
+  //           console.log(signedTx);
+  //         }
+  //       }
+  //       const params: MintCollectibleDataType = {
+  //         // orderType: "COLLECTIBLE",
+  //         file: files,
+  //         // name: name,
+  //         // creator: creator,
+  //         feeRate: 1,
+  //         txid: collectionTxid,
+  //         collectionId: "",
+  //       };
 
-        const response = await createCollectiblesMutation({ data: params });
-        console.log("🚀 ~ handlePay ~ response:", response);
-        if (response && response.success) {
-          if (currentLayer.layer === "CITREA") {
-            const { batchMintTxHex } = response.data;
-            const { signer } = await getSigner();
-            const signedTx = await signer?.sendTransaction(batchMintTxHex);
-            await signedTx?.wait();
-            if (signedTx?.hash) setHash(signedTx?.hash);
-          } else if (currentLayer.layer === "FRACTAL") {
-            console.log(
-              response.data.order.fundingAddress,
-              response.data.order.fundingAmount,
-            );
-            await window.unisat.sendBitcoin(
-              response.data.order.fundingAddress,
-              Math.ceil(response.data.order.fundingAmount),
-            );
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          setData(response.data.order.id);
-          onClose();
-          setInscribeModal(true);
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to create order");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //       const response = await createCollectiblesMutation({ data: params });
+  //       console.log("🚀 ~ handlePay ~ response:", response);
+  //       if (response && response.success) {
+  //         if (currentLayer.layer === "CITREA") {
+  //           const { batchMintTxHex } = response.data;
+  //           const { signer } = await getSigner();
+  //           const signedTx = await signer?.sendTransaction(batchMintTxHex);
+  //           await signedTx?.wait();
+  //           if (signedTx?.hash) setHash(signedTx?.hash);
+  //         } else if (currentLayer.layer === "FRACTAL") {
+  //           console.log(
+  //             response.data.order.fundingAddress,
+  //             response.data.order.fundingAmount,
+  //           );
+  //           await window.unisat.sendBitcoin(
+  //             response.data.order.fundingAddress,
+  //             Math.ceil(response.data.order.fundingAmount),
+  //           );
+  //         }
+  //         await new Promise((resolve) => setTimeout(resolve, 1000));
+  //         setData(response.data.order.id);
+  //         onClose();
+  //         setInscribeModal(true);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error("Failed to create order");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     if (open && fileSizes.length > 0 && fileTypeSizes) {
@@ -220,8 +220,8 @@ const SubmitPayModal: React.FC<ModalProps> = ({
       selectedTab === "Slow"
         ? feeRate
         : selectedTab === "Fast"
-          ? feeRate
-          : feeRate,
+        ? feeRate
+        : feeRate
     );
   }, [selectedTab]);
 
@@ -351,7 +351,6 @@ const SubmitPayModal: React.FC<ModalProps> = ({
             </Button>
             <Button
               className="flex items-center justify-center"
-              onClick={handlePay}
               disabled={isLoading}
             >
               {isLoading

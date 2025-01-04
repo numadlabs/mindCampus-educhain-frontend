@@ -25,7 +25,7 @@ const Options: React.FC<optionsProps> = ({
                    }`}
       onClick={onClick}
     >
-      <Icon size={40} color={isSelected ? "#D3F85A" : "#F8F9FA"} />
+      <Icon size={40} color={isSelected ? "#0FD577" : "#F8F9FA"} />
       <div className="flex flex-col gap-2">
         <p className="text-2xl text-neutral50 font-bold">{title}</p>
         <p className="text-lg text-neutral100 font-normal">{text}</p>

@@ -34,13 +34,13 @@ const SelectColModal: React.FC<ModalProps> = ({ open, onClose }) => {
       title: "Recursive inscription",
       description: "NFT’s  with customizable traits  and attributes ",
       icon: Coin,
-      handleNav: () => router.push("/create/collection/recursive"),
+      handleNav: () => router.push("/create/collection/inscription"),
     },
     {
       title: "IPFS",
       description: "Store your NFT’s usign decentralized IPFS storage ",
       icon: BuyCrypto,
-      handleNav: () => router.push("/create/collection/ipfs"),
+      handleNav: () => router.push("/create/collection/inscription"),
     },
   ];
   return (

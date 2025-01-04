@@ -24,6 +24,8 @@ import { CollectionDataType } from "@/lib/types";
 import CollectionSideBar from "@/components/section/collections/sideBar";
 import CollectionDetailSkeleton from "@/components/atom/skeleton/collection-detail-skeleton";
 import { motion, AnimatePresence } from "framer-motion";
+import { EDUTOKEN_IMAGE } from "@/lib/constants";
+import Header from "@/components/layout/header";
 const CollectionDetailPage = () => {
   const params = useParams();
   const { id } = params;
@@ -103,10 +105,8 @@ const CollectionDetailPage = () => {
 
   return (
     <>
-      <Tabs
-        defaultValue="AllCard"
-        className="mt-[43.5px] mb-10 px-4 md:px-6 lg:px-12"
-      >
+      <Header />
+      <Tabs defaultValue="AllCard" className="mt-8 mb-10 px-4 md:px-6 lg:px-12">
         <section>
           {/* Banner Section */}
           <div className="w-full relative h-[320px] mt-10">
@@ -175,7 +175,7 @@ const CollectionDetailPage = () => {
                         <Image
                           width={24}
                           height={20}
-                          src="/detail_icon/Bitcoin.png"
+                          src={EDUTOKEN_IMAGE}
                           alt="bitcoin"
                           className="aspect-square"
                         />
@@ -198,7 +198,7 @@ const CollectionDetailPage = () => {
                         <Image
                           width={24}
                           height={20}
-                          src="/detail_icon/Bitcoin.png"
+                          src={EDUTOKEN_IMAGE}
                           alt="bitcoin"
                           className="aspect-square"
                         />
@@ -218,7 +218,7 @@ const CollectionDetailPage = () => {
                         Owners
                       </h2>
                       <div className="flex items-center justify-center md:justify-start mt-2">
-                        <Profile2User color="#d3f85a" />
+                        <Profile2User color="#0FD577" />
                         <p className="ml-2 font-bold text-lg md:text-xl text-neutral50">
                           <span>
                             {collectionData?.ownerCount
@@ -234,7 +234,7 @@ const CollectionDetailPage = () => {
                         Items
                       </h2>
                       <div className="flex items-center justify-center md:justify-start mt-2">
-                        <Notepad color="#d3f85a" />
+                        <Notepad color="#0FD577" />
                         <p className="ml-2 font-bold text-lg md:text-xl text-neutral50">
                           <span>{collectionData?.supply}</span>
                         </p>
@@ -338,11 +338,7 @@ const CollectionDetailPage = () => {
 
           {/* Content */}
 
-          <div
-            className={`flex-grow ${
-              active ? "w-[calc(100%-380px)]" : "sm:w-full"
-            }`}
-          >
+          <div className={` ${active ? "w-[calc(100%-380px)]" : "sm:w-full"}`}>
             <AnimatePresence mode="wait">
               <motion.div
                 initial={{ opacity: 0 }}
@@ -367,39 +363,41 @@ const CollectionDetailPage = () => {
                 </TabsContent>
 
                 <TabsContent value="ColCard" className="w-full">
-                  <div className="w-full overflow-x-auto border-b border-neutral400">
-                    <div className="w-full min-w-[1216px] h-[34px] pr-8 pb-4 pl-4">
-                      <div className="w-[324px]">
-                        <p className="font-medium text-md text-neutral200">
-                          Item
-                        </p>
+                  <div className="w-full overflow-x-auto">
+                    <div className="min-w-[1216px] w-full">
+                      <div className="w-full pr-8 pb-4 pl-4 flex items-center border-b border-neutral400">
+                        <div className="w-[324px]">
+                          <p className="font-medium text-md text-neutral200">
+                            Item
+                          </p>
+                        </div>
+                        <div className="grid grid-cols-4 pl-5 w-full text-center">
+                          <p className="font-medium text-md text-neutral200">
+                            Price
+                          </p>
+                          <p className="font-medium text-md text-neutral200">
+                            Floor difference
+                          </p>
+                          <p className="font-medium text-md text-neutral200">
+                            Owner
+                          </p>
+                          <p className="font-medium text-md text-neutral200">
+                            Listed time
+                          </p>
+                        </div>
                       </div>
-                      <div className="grid grid-cols-4 pl-5 w-full text-center">
-                        <p className="font-medium text-md text-neutral200">
-                          Price
-                        </p>
-                        <p className="font-medium text-md text-neutral200">
-                          Floor difference
-                        </p>
-                        <p className="font-medium text-md text-neutral200">
-                          Owner
-                        </p>
-                        <p className="font-medium text-md text-neutral200">
-                          Listed time
-                        </p>
+
+                      <div className="h-[754px] w-full min-w-[1216px] border-t-2 border-neutral500">
+                        <div className="flex flex-col pt-4 gap-4">
+                          {collection?.collectibles?.map((item: any) => (
+                            <div key={item.id}>
+                              <ColDetailCards data={item} />
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  <ScrollArea className="h-[754px] w-full border-t-2 overflow-x-auto border-neutral500">
-                    <div className="flex flex-col w-full pt-4 gap-4">
-                      {collection?.collectibles?.map((item: any) => (
-                        <div key={item.id}>
-                          <ColDetailCards data={item} />
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
                 </TabsContent>
               </motion.div>
             </AnimatePresence>

@@ -133,6 +133,7 @@ export type CollectionData = {
   userLayerId: string | null;
   layerId: string | null;
   isBadge: boolean;
+  creator: string;
 };
 
 export type FeeRateAmount = {

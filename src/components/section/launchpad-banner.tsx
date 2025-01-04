@@ -12,6 +12,7 @@ import {
 import moment from "moment";
 import Link from "next/link";
 import { Launchschema } from "@/lib/validations/launchpad-validation";
+import { EDUTOKEN_IMAGE } from "@/lib/constants";
 
 interface BannerProps {
   data?: Launchschema;
@@ -115,18 +116,18 @@ const LaunchpadBanner: React.FC<BannerProps> = ({ data }) => {
                       We are live on
                     </p>
                     <Image
-                      src="/wallets/Citrea.png"
+                      src={EDUTOKEN_IMAGE}
                       alt="citrea"
                       width={32}
                       height={32}
                       className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg"
                     />
                     <p className="text-xl sm:text-2xl lg:text-3xl text-neutral00 font-bold">
-                      Citrea testnet!
+                      EDU Chain Testnet!
                     </p>
                   </div>
                   <p className="text-sm lg:text-lg text-neutral50 px-4 text-center">
-                    Mint Park is live on Citrea testnet! Start minting and
+                    Mind Campus is live on EDU Chain Testnet! Start minting and
                     trading NFTs.
                   </p>
                 </div>
@@ -170,8 +171,12 @@ const LaunchpadBanner: React.FC<BannerProps> = ({ data }) => {
                                 <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 lg:w-2 lg:h-2 bg-success rounded-full" />
                               </div>
                             )}
-                            <p className="text-lg font-normal text-neutral100">{status}</p>
-                            <p className="text-lg font-medium text-neutral00">{timeDisplay}</p>
+                            <p className="text-lg font-normal text-neutral100">
+                              {status}
+                            </p>
+                            <p className="text-lg font-medium text-neutral00">
+                              {timeDisplay}
+                            </p>
                           </div>
                           {(status === "Indefinite" ||
                             status === "Ends in:") && (

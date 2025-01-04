@@ -148,7 +148,7 @@ const BuyAssetModal: React.FC<ModalProps> = ({
             <div className="w-full flex flex-col gap-6 items-center justify-center">
               <div className="flex flex-col gap-6 p-4 w-full justify-center items-center">
                 <div className="p-3 flex justify-center items-center rounded-2xl bg-white8 w-16 h-16">
-                  <Check size={40} color="#FFEE32" />
+                  <Check size={40} color="#0FD577" />
                 </div>
                 <div className="flex flex-col gap-3 justify-center items-center">
                   <p className="text-2xl text-brand font-bold">

@@ -8,12 +8,13 @@ export default function CollectionLayout({
   children: ReactNode;
 }) {
   return (
-    <div className="flex flex-col w-full h-full bg-background items-center">
-      <div className="w-full overflow-x-auto px-4 max-w-[1920px] md2:px-[112px] 3xl:px-10">
-        <Header />
+    <div className="flex flex-col w-full h-full bg-background min-h-screen items-center">
+      <div className="w-full overflow-x-hidden max-w-[1920px] px-4 md2:px-[112px] 3xl:px-10">
         {children}
       </div>
-      <Footer/>
+      <div className="w-full">
+        <Footer />
+      </div>
     </div>
   );
 }

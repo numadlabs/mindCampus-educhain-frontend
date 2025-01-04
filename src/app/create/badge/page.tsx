@@ -10,13 +10,8 @@ import ButtonOutline from "@/components/ui/buttonOutline";
 import Layout from "@/components/layout/layout";
 import UploadCardFill from "@/components/atom/cards/upload-card-fill";
 import Image from "next/image";
-import CollectiblePreviewCard from "@/components/atom/cards/collectible-preview-card";
 import {
-  ImageFile,
   CollectionData,
-  InscriptionCollectible,
-  CreateLaunchParams,
-  LaunchParams,
   LaunchType,
   LaunchItemType,
   MintFeeType,
@@ -24,29 +19,29 @@ import {
 import TextArea from "@/components/ui/textArea";
 import {
   createCollection,
-  createMintCollection,
-  insriptionCollectible,
-  invokeOrderMint,
-  createLaunchItems,
   createLaunch,
   launchItems,
   mintFeeOfCitrea,
 } from "@/lib/service/postRequest";
 import useCreateFormState from "@/lib/store/createFormStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import CollectionUploadFile from "@/components/section/collection-upload-file";
-import Toggle from "@/components/ui/toggle";
 import { Calendar2, Clock, Bitcoin } from "iconsax-react";
 import { useAuth } from "@/components/provider/auth-context-provider";
 import moment from "moment";
 import SuccessModal from "@/components/modal/success-modal";
 import { getLayerById } from "@/lib/service/queryHelper";
-import { ethers } from "ethers";
-import { getSigner } from "@/lib/utils";
+import { cn, getSigner } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { BADGE_BATCH_SIZE } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
 
 const Badge = () => {
   const router = useRouter();
@@ -74,44 +69,20 @@ const Badge = () => {
     setPOMaxMintPerWallet,
     txid,
     setTxid,
+    supply,
+    setSupply,
     reset,
   } = useCreateFormState();
   const queryClient = useQueryClient();
   const [step, setStep] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [collectionId, setCollectionId] = useState<string>("");
-  const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [payModal, setPayModal] = useState(false);
-  const [fileTypes, setFileTypes] = useState<Set<string>>(new Set());
-  const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
-  const [fileSizes, setFileSizes] = useState<number[]>([]);
-  const [badgeSupply, setBadgeSupply] = useState<number>();
-
   const stepperData = ["Details", "Launch", "Upload", "Confirm"];
-  const [totalFileSize, setTotalFileSize] = useState<number>(0);
-  const [fileTypeSizes, setFileTypeSizes] = useState<number[]>([]);
   const [successModal, setSuccessModal] = useState(false);
-  const [data, setData] = useState<string>("");
-  const [id, setId] = useState<string>("");
+  const [date, setDate] = React.useState<Date>();
 
   const { mutateAsync: createCollectionMutation } = useMutation({
     mutationFn: createCollection,
-  });
-
-  const { mutateAsync: createOrder } = useMutation({
-    mutationFn: createMintCollection,
-  });
-
-  const { mutateAsync: inscriptionMutation } = useMutation({
-    mutationFn: insriptionCollectible,
-  });
-
-  const { mutateAsync: invokeOrderMutation } = useMutation({
-    mutationFn: invokeOrderMint,
-  });
-
-  const { mutateAsync: launchItemsMutation } = useMutation({
-    mutationFn: createLaunchItems,
   });
 
   const { mutateAsync: createLaunchMutation } = useMutation({
@@ -120,28 +91,15 @@ const Badge = () => {
 
   const { mutateAsync: launchItemMutation } = useMutation({
     mutationFn: launchItems,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["launchData"] });
+      queryClient.invalidateQueries({ queryKey: ["collectionData"] });
+    },
   });
 
   const { mutateAsync: mintFeeOfCitreaMutation } = useMutation({
     mutationFn: mintFeeOfCitrea,
   });
-
-  const updateFileInfo = (files: File[]) => {
-    const newSizes = files.map((file) => file.size);
-    setFileSizes((prevSizes) => [...prevSizes, ...newSizes]);
-
-    const newTotalSize = newSizes.reduce((acc, size) => acc + size, 0);
-    setTotalFileSize((prevTotal) => prevTotal + newTotalSize);
-
-    const newTypes = files.map((file) => file.type.length);
-    setFileTypeSizes((prevTypes) => [...prevTypes, ...newTypes]);
-
-    setFileTypes((prevTypes) => {
-      const updatedTypes = new Set(prevTypes);
-      files.forEach((file) => updatedTypes.add(file.type));
-      return updatedTypes;
-    });
-  };
 
   const { data: currentLayer = [] } = useQuery({
     queryKey: ["currentLayerData", selectedLayerId],
@@ -205,6 +163,7 @@ const Badge = () => {
         userLayerId: authState.userLayerId,
         layerId: selectedLayerId,
         isBadge: true,
+        creator: creator,
       };
       if (params) {
         const response = await createCollectionMutation({ data: params });
@@ -214,7 +173,6 @@ const Badge = () => {
           const { deployContractTxHex } = response.data;
           setCollectionId(id);
           console.log("create collection success", response);
-          toast.success("Create collection success.");
 
           if (currentLayer.layer === "EDUCHAIN") {
             const { signer } = await getSigner();
@@ -238,54 +196,11 @@ const Badge = () => {
     const file = event.target.files?.[0] || null;
     if (file) {
       setImageFile([file]);
-      updateFileInfo([file]);
     }
-  };
-
-  const handleUploadChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-
-    if (files) {
-      const filteredFiles = Array.from(files).filter((file) => file.size > 0); // Only process non-empty files
-
-      const newImageFiles: ImageFile[] = filteredFiles.map((file) => ({
-        file,
-        preview: URL.createObjectURL(file),
-      }));
-
-      setImageFiles((prevFiles) => [...prevFiles, ...newImageFiles]);
-
-      // Calculate sizes only for valid files
-      const newSizes = filteredFiles.map((file) => file.size);
-      setFileSizes((prevSizes) => [...prevSizes, ...newSizes]);
-
-      const newTotalSize = newSizes.reduce((acc, size) => acc + size, 0);
-      setTotalFileSize((prevTotal) => prevTotal + newTotalSize);
-
-      const newTypes = filteredFiles.map((file) => file.type.length);
-      setFileTypeSizes((prevTypes) => [...prevTypes, ...newTypes]);
-
-      setFileTypes((prevTypes) => {
-        const updatedTypes = new Set(prevTypes);
-        filteredFiles.forEach((file) => updatedTypes.add(file.type));
-        return updatedTypes;
-      });
-    }
-  };
-
-  const togglePayModal = () => {
-    setPayModal(!payModal);
-    // reset();
-  };
-
-  const handleToggle = () => {
-    setIsChecked(!isChecked);
-    // reset();
   };
 
   const handleDeleteLogo = () => {
     setImageFile([]); // Clear the imageFile array
-    // setImageLogo(null);
   };
 
   const handleBack = () => {
@@ -303,11 +218,14 @@ const Badge = () => {
     reset();
   };
 
+  const handleNavigation = () => {
+    router.push("/launchpad");
+    reset();
+  };
+
   const toggleSuccessModal = () => {
     setSuccessModal(!successModal);
   };
-
-  const files = imageFiles.map((image) => image.file);
 
   const handleMintfeeChange = async () => {
     if (!currentLayer) {
@@ -326,9 +244,6 @@ const Badge = () => {
       });
       if (response && response.success) {
         const { singleMintTxHex } = response.data;
-        console.log("create collection success", response);
-        toast.success("Create collection success.");
-
         if (currentLayer.layer === "EDUCHAIN") {
           const { signer } = await getSigner();
           const signedTx = await signer?.sendTransaction(singleMintTxHex);
@@ -371,7 +286,7 @@ const Badge = () => {
           data: params,
           txid: txid,
           badge: imageFile[0], // Pass the first (and only) file from imageFile array
-          badgeSupply: badgeSupply,
+          badgeSupply: supply,
         });
 
         if (launchResponse && launchResponse.success) {
@@ -384,13 +299,14 @@ const Badge = () => {
 
           for (
             let i = 0;
-            i < Math.ceil(Number(badgeSupply) / BADGE_BATCH_SIZE);
+            i < Math.ceil(Number(supply) / BADGE_BATCH_SIZE);
             i++
           ) {
             response = await launchItemMutation({ data: launchItemsData });
           }
 
           if (response && response.success) {
+            console.log("create collection success", response);
             toggleSuccessModal();
           }
         }
@@ -405,102 +321,13 @@ const Badge = () => {
     }
   };
 
-  const handleNavigateToOrder = () => {
-    router.push(`/orders`);
-    reset();
-  };
-
-  const handleNavigateToCreate = () => {
-    router.push(`/create`);
-    reset();
-  };
-
-  // const handlePay = async () => {
-  //   if (!currentLayer) {
-  //     toast.error("Layer information not available");
-  //     return false;
-  //   }
-
-  //   setIsLoading(true);
-
-  //   // Process files in batches of 10
-  //   const batchSize = 10;
-  //   const totalBatches = Math.ceil(files.length / batchSize);
-  //   try {
-  //     if (collectionId && authState.userLayerId && totalFileSize) {
-  //       const response = await createOrder({
-  //         collectionId: collectionId,
-  //         feeRate: 1,
-  //         txid: txid,
-  //         userLayerId: authState.userLayerId,
-  //         totalFileSize: totalFileSize,
-  //         totalCollectibleCount: files.length,
-  //       });
-  //       if (response && response.success) {
-  //         let id;
-  //         await window.unisat.sendBitcoin(
-  //           response.data.order.fundingAddress,
-  //           Math.ceil(response.data.order.fundingAmount)
-  //         );
-
-  //         id = response.data.order.id;
-  //         setData(response.data.order.id);
-
-  //         await new Promise((resolve) => setTimeout(resolve, 2000));
-
-  //         for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
-  //           // Get the current batch of files
-  //           const start = batchIndex * batchSize;
-  //           const end = Math.min(start + batchSize, files.length);
-  //           const currentBatchFiles = files.slice(start, end);
-
-  //           const names = currentBatchFiles.map(
-  //             (_, index) => `${name.replace(/\s+/g, "")}-${start + index + 1}`
-  //           );
-  //           const params: InscriptionCollectible = {
-  //             files: currentBatchFiles,
-  //             collectionId: collectionId,
-  //             names: names, // Total count of all files
-  //           };
-
-  //           const colRes = await inscriptionMutation({ data: params });
-
-  //           if (colRes && colRes.success) {
-  //             // Small delay between batches to prevent rate limiting
-  //             if (batchIndex < totalBatches - 1) {
-  //               await new Promise((resolve) => setTimeout(resolve, 1000));
-  //             }
-
-  //             // // Store the last successful order ID
-  //             // setData(colRes.data.order.id);
-  //           }
-
-  //           console.log("Batch upload index: ", batchIndex);
-  //         }
-
-  //         const orderRes = await invokeOrderMutation({
-  //           id: response.data.order.id,
-  //         });
-  //         if (orderRes && orderRes.success) {
-  //           toggleSuccessModal();
-  //         }
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error("Failed to create order");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   return (
     <Layout>
       <div className="flex flex-col w-full h-max bg-background pb-[148px]">
         <Header />
         <div className="flex flex-col items-center gap-16 z-50">
           <Banner
-            title={"Create Collection"}
+            title={"Create Badge"}
             image={"/background-2.png"}
             setStep={step}
             stepperData={stepperData}
@@ -537,7 +364,6 @@ const Badge = () => {
                   </div>
 
                   <TextArea
-                    // onReset={reset}
                     title="Description"
                     text="Description"
                     value={description}
@@ -553,7 +379,6 @@ const Badge = () => {
                   onClick={handleCreateCollection}
                   disabled={isLoading}
                   className="w-full"
-                  // isLoading={isLoading}
                 >
                   {isLoading ? (
                     <Loader2
@@ -570,157 +395,135 @@ const Badge = () => {
           )}
           {step == 1 && (
             <div className="w-[592px] items-start flex flex-col gap-16">
-              <div className="flex flex-col w-full gap-4">
-                <div className="flex flex-row justify-between items-center">
-                  <p className="font-bold text-profileTitle text-neutral50">
-                    Launch on Mint Park
+              <div className="flex flex-col gap-8">
+                <div className="flex flex-col w-full gap-4">
+                  <div className="flex flex-row justify-between items-center">
+                    <p className="font-bold text-profileTitle text-neutral50">
+                      Public phase
+                    </p>
+                  </div>
+                  <p className="text-neutral200 text-lg">
+                    Take control of your digital creations. Our platform
+                    provides the tools you need to mint, manage, and monetize
+                    your NFT collections. Join a growing ecosystem of artists
+                    redefining the boundaries of digital art.
                   </p>
-                  <Toggle isChecked={isChecked} onChange={handleToggle} />
                 </div>
-                <p className="text-neutral200 text-lg">
-                  Discover endless possibilities in digital creation. Our
-                  platform empowers artists and creators to bring their vision
-                  to life through unique NFT collections. With advanced tools
-                  and seamless integration, you can focus on what matters most -
-                  your creative expression.
-                </p>
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-row justify-between items-center">
+                    <p className="text-neutral50 text-xl font-medium">
+                      Start date
+                    </p>
+                    <div className="flex flex-row gap-4">
+                      <div className="relative flex items-center">
+                        <Input
+                          type="birthdaytime"
+                          placeholder="YYYY - MM - DD"
+                          className="pl-10 w-[184px]"
+                          value={POStartsAtDate}
+                          onChange={(e) => setPOStartsAtDate(e.target.value)}
+                        />
+                        <div className="absolute left-4">
+                          <Calendar2 size={20} color="#D7D8D8" />
+                        </div>
+                      </div>
+                      <div className="relative flex items-center">
+                        <Input
+                          placeholder="HH : MM"
+                          className="pl-10 w-[184px]"
+                          value={POStartsAtTime}
+                          onChange={(e) => setPOStartsAtTime(e.target.value)}
+                        />
+                        <div className="absolute left-4">
+                          <Clock size={20} color="#D7D8D8" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-row justify-between items-center">
+                    <p className="text-neutral50 text-xl font-medium">
+                      End date
+                    </p>
+                    <div className="flex flex-row gap-4">
+                      <div className="relative flex items-center">
+                        <Input
+                          type="birthdaytime"
+                          placeholder="YYYY - MM - DD"
+                          className="pl-10 w-[184px]"
+                          value={POEndsAtDate}
+                          onChange={(e) => setPOEndsAtDate(e.target.value)}
+                        />
+                        <div className="absolute left-4">
+                          <Calendar2 size={20} color="#D7D8D8" />
+                        </div>
+                      </div>
+                      <div className="relative flex items-center">
+                        <Input
+                          placeholder="HH : MM"
+                          className="pl-10 w-[184px]"
+                          value={POEndsAtTime}
+                          onChange={(e) => setPOEndsAtTime(e.target.value)}
+                        />
+                        <div className="absolute left-4">
+                          <Clock size={20} color="#D7D8D8" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <p className="text-lg text-neutral50 font-medium">Supply</p>
+                  <Input
+                    onReset={reset}
+                    placeholder="0"
+                    value={supply}
+                    type="number"
+                    onChange={(e) => setSupply(parseInt(e.target.value))}
+                  />
+                </div>
+                <div className="flex flex-col gap-3">
+                  <p className="text-neutral50 text-lg font-medium">
+                    Public mint price
+                  </p>
+                  <div className="relative flex items-center">
+                    <Input
+                      onReset={reset}
+                      placeholder="Amount"
+                      className="w-full pl-10"
+                      type="number"
+                      value={POMintPrice}
+                      onChange={(e) => setPOMintPrice(Number(e.target.value))}
+                    />
+                    <div className="absolute left-4">
+                      <Bitcoin size={20} color="#D7D8D8" />
+                    </div>
+                    <div className="absolute right-4">
+                      <p className="text-md text-neutral200 font-medium">EDU</p>
+                    </div>
+                  </div>
+                  <p className="text-neutral200 text-sm pl-4">
+                    Enter 0 for free mints
+                  </p>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <p className="text-lg text-neutral50 font-medium">
+                    Max mint per wallet
+                  </p>
+                  <Input
+                    onReset={reset}
+                    placeholder="0"
+                    value={POMaxMintPerWallet}
+                    type="number"
+                    onChange={(e) =>
+                      setPOMaxMintPerWallet(parseInt(e.target.value))
+                    }
+                  />
+                </div>
               </div>
-              {isChecked ? (
-                <div className="flex flex-col gap-8">
-                  <div className="flex flex-col w-full gap-4">
-                    <div className="flex flex-row justify-between items-center">
-                      <p className="font-bold text-profileTitle text-neutral50">
-                        Public phase
-                      </p>
-                    </div>
-                    <p className="text-neutral200 text-lg">
-                      Take control of your digital creations. Our platform
-                      provides the tools you need to mint, manage, and monetize
-                      your NFT collections. Join a growing ecosystem of artists
-                      redefining the boundaries of digital art.
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-4">
-                    <div className="flex flex-row justify-between items-center">
-                      <p className="text-neutral50 text-xl font-medium">
-                        Start date
-                      </p>
-                      <div className="flex flex-row gap-4">
-                        <div className="relative flex items-center">
-                          <Input
-                            type="birthdaytime"
-                            placeholder="YYYY - MM - DD"
-                            className="pl-10 w-[184px]"
-                            value={POStartsAtDate}
-                            onChange={(e) => setPOStartsAtDate(e.target.value)}
-                          />
-                          <div className="absolute left-4">
-                            <Calendar2 size={20} color="#D7D8D8" />
-                          </div>
-                        </div>
-                        <div className="relative flex items-center">
-                          <Input
-                            placeholder="HH : MM"
-                            className="pl-10 w-[184px]"
-                            value={POStartsAtTime}
-                            onChange={(e) => setPOStartsAtTime(e.target.value)}
-                          />
-                          <div className="absolute left-4">
-                            <Clock size={20} color="#D7D8D8" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex flex-row justify-between items-center">
-                      <p className="text-neutral50 text-xl font-medium">
-                        End date
-                      </p>
-                      <div className="flex flex-row gap-4">
-                        <div className="relative flex items-center">
-                          <Input
-                            type="birthdaytime"
-                            placeholder="YYYY - MM - DD"
-                            className="pl-10 w-[184px]"
-                            value={POEndsAtDate}
-                            onChange={(e) => setPOEndsAtDate(e.target.value)}
-                          />
-                          <div className="absolute left-4">
-                            <Calendar2 size={20} color="#D7D8D8" />
-                          </div>
-                        </div>
-                        <div className="relative flex items-center">
-                          <Input
-                            placeholder="HH : MM"
-                            className="pl-10 w-[184px]"
-                            value={POEndsAtTime}
-                            onChange={(e) => setPOEndsAtTime(e.target.value)}
-                          />
-                          <div className="absolute left-4">
-                            <Clock size={20} color="#D7D8D8" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    <p className="text-lg text-neutral50 font-medium">Supply</p>
-                    <Input
-                      onReset={reset}
-                      placeholder="0"
-                      value={badgeSupply}
-                      type="number"
-                      onChange={(e) => setBadgeSupply(Number(e.target.value))}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    <p className="text-neutral50 text-lg font-medium">
-                      Public mint price
-                    </p>
-                    <div className="relative flex items-center">
-                      <Input
-                        onReset={reset}
-                        placeholder="Amount"
-                        className="w-full pl-10"
-                        type="number"
-                        value={POMintPrice}
-                        onChange={(e) => setPOMintPrice(Number(e.target.value))}
-                      />
-                      <div className="absolute left-4">
-                        <Bitcoin size={20} color="#D7D8D8" />
-                      </div>
-                      <div className="absolute right-4">
-                        <p className="text-md text-neutral200 font-medium">
-                          EDU
-                        </p>
-                      </div>
-                    </div>
-                    <p className="text-neutral200 text-sm pl-4">
-                      Enter 0 for free mints
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    <p className="text-lg text-neutral50 font-medium">
-                      Max mint per wallet
-                    </p>
-                    <Input
-                      onReset={reset}
-                      placeholder="0"
-                      value={POMaxMintPerWallet}
-                      type="number"
-                      onChange={(e) =>
-                        setPOMaxMintPerWallet(Number(e.target.value))
-                      }
-                    />
-                  </div>
-                </div>
-              ) : (
-                ""
-              )}
               <div className="flex flex-row w-full gap-8">
                 <ButtonOutline title="Back" onClick={handleBack} />
                 <Button
-                  onClick={() => setStep(2)}
-                  // isLoading={isLoading}
+                  onClick={handleMintfeeChange}
                   disabled={isLoading}
                   className="flex items-center   border border-neutral400 rounded-xl text-neutral600 bg-brand font-bold  w-full justify-center"
                 >
@@ -740,9 +543,16 @@ const Badge = () => {
           {step == 2 && (
             <div className="w-[592px] items-start flex flex-col gap-16">
               <div className="flex flex-col w-full gap-8">
-                <p className="font-bold text-profileTitle text-neutral50">
-                  Upload your Collection
-                </p>
+                <div className="w-full flex flex-col gap-4">
+                  <p className="font-bold text-profileTitle text-neutral50">
+                    Upload your Badge
+                  </p>
+                  <p className="text-lg text-neutral200">
+                    The NFTs you want to include for this brand or project.
+                    Please name your files sequentially, like ‘1.png’, ‘2.jpg’,
+                    ‘3.webp’, etc., according to their order and file type.
+                  </p>
+                </div>
                 {imageFile && imageFile[0] ? (
                   <UploadCardFill
                     image={URL.createObjectURL(imageFile[0])}
@@ -759,9 +569,7 @@ const Badge = () => {
                 <ButtonOutline title="Back" onClick={handleBack} />
                 <Button
                   className="flex w-full border border-neutral400 rounded-xl text-neutral600 bg-brand font-bold items-center justify-center"
-                  // type="submit"
                   onClick={() => setStep(3)}
-                  // isLoading={isLoading}
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -773,8 +581,6 @@ const Badge = () => {
                   ) : (
                     "Continue"
                   )}
-
-                  {/* {isLoading ? "...loading" : "Continue"} */}
                 </Button>
               </div>
             </div>
@@ -803,48 +609,47 @@ const Badge = () => {
                   <p className="text-neutral100 text-lg">{description}</p>
                 </div>
               </div>
-              {isChecked && (
-                <div className="flex flex-col gap-8 w-full">
-                  <p className="text-[28px] leading-9 text-neutral50 font-bold">
-                    Public phase
-                  </p>
-                  <div className="flex flex-col gap-4">
-                    <div className="flex flex-row justify-between items-center">
-                      <p className="text-neutral200 text-lg">Start date</p>
-                      <p className="text-neutral50 text-lg font-bold">
-                        {POStartsAtDate},{POStartsAtTime}
-                      </p>
-                    </div>
-                    <div className="flex flex-row justify-between items-center">
-                      <p className="text-neutral200 text-lg">End date</p>
-                      <p className="text-neutral50 text-lg font-bold">
-                        {POEndsAtDate},{POEndsAtTime}
-                      </p>
-                    </div>
-                    <div className="flex flex-row justify-between items-center">
-                      <p className="text-neutral200 text-lg">
-                        Public mint price
-                      </p>
-                      <p className="text-neutral50 text-lg font-bold">
-                        {POMintPrice}
-                      </p>
-                    </div>
-                    <div className="flex flex-row justify-between items-center">
-                      <p className="text-neutral200 text-lg">
-                        Max mint per wallet
-                      </p>
-                      <p className="text-neutral50 text-lg font-bold">
-                        {POMaxMintPerWallet}
-                      </p>
-                    </div>
+              <div className="flex flex-col gap-8 w-full">
+                <p className="text-[28px] leading-9 text-neutral50 font-bold">
+                  Public phase
+                </p>
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-row justify-between items-center">
+                    <p className="text-neutral200 text-lg">Start date</p>
+                    <p className="text-neutral50 text-lg font-bold">
+                      {POStartsAtDate},{POStartsAtTime}
+                    </p>
+                  </div>
+                  <div className="flex flex-row justify-between items-center">
+                    <p className="text-neutral200 text-lg">End date</p>
+                    <p className="text-neutral50 text-lg font-bold">
+                      {POEndsAtDate},{POEndsAtTime}
+                    </p>
+                  </div>
+                  <div className="flex flex-row justify-between items-center">
+                    <p className="text-neutral200 text-lg">Supply</p>
+                    <p className="text-neutral50 text-lg font-bold">{supply}</p>
+                  </div>
+                  <div className="flex flex-row justify-between items-center">
+                    <p className="text-neutral200 text-lg">Public mint price</p>
+                    <p className="text-neutral50 text-lg font-bold">
+                      {POMintPrice}
+                    </p>
+                  </div>
+                  <div className="flex flex-row justify-between items-center">
+                    <p className="text-neutral200 text-lg">
+                      Max mint per wallet
+                    </p>
+                    <p className="text-neutral50 text-lg font-bold">
+                      {POMaxMintPerWallet}
+                    </p>
                   </div>
                 </div>
-              )}
+              </div>
               <div className="flex flex-row gap-8">
                 <ButtonOutline title="Back" onClick={handleBack} />
                 <Button
                   onClick={handleCreateLaunch}
-                  // isLoading={isLoading}
                   disabled={isLoading}
                   className="flex justify-center border border-neutral400 rounded-xl text-neutral600 bg-brand font-bold  w-full items-center"
                 >
@@ -855,7 +660,6 @@ const Badge = () => {
                       size={24}
                     />
                   ) : (
-                    // "Loading"
                     "Confirm"
                   )}
                 </Button>
@@ -864,23 +668,11 @@ const Badge = () => {
           )}
         </div>
       </div>
-      {/* <OrderPayModal
-        open={payModal}
-        onClose={togglePayModal}
-        fileTypeSizes={fileTypeSizes}
-        id={collectionId}
-        fileSizes={fileSizes}
-        files={files}
-        navigateOrders={handleNavigateToOrder}
-        navigateToCreate={handleNavigateToCreate}
-        hash={
-          "0x41aad9ebeee10d124f4abd123d1fd41dbb80162e339e9d61db7e90dd6139e89e"
-        }
-      /> */}
       <SuccessModal
         open={successModal}
         onClose={toggleSuccessModal}
         handleCreate={handleCreate}
+        handleNavigation={handleNavigation}
       />
     </Layout>
   );

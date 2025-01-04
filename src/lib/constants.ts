@@ -7,6 +7,7 @@ export const maraUrl =
   "http://btc-testnet-wallet.mara.technology:9130/unspents/list?address=&xpub=";
 
 export const fileSizeLimit = 3145728; //3MB in binary
+export const EDUTOKEN_IMAGE = "/wallets/EduChain.png";
 
 //native segwit
 export const outputSize = 31,
