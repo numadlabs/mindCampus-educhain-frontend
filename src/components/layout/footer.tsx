@@ -8,7 +8,7 @@ export default function Footer() {
 
   const handleTermsClick = () => router.push("/terms-conditions");
   const handlePrivacyClick = () => router.push("/privacy-policy");
-  const handleTwitter = () => router.push("https://x.com/mintpark_io");
+  const handleTwitter = () => router.push("/");
   const handleLogoClick = () => router.push("/");
   const handleCreate = () => router.push("/create");
   const handleLaunchapd = () => router.push("/launchpad");
@@ -24,7 +24,7 @@ export default function Footer() {
               <TextLogo />
             </div>
             <p className="font-medium text-md text-neutral200 mt-4 lg:mt-0">
-              ©2024 Mind Campus. All rights reserved.
+              ©2025 Mind Campus. All rights reserved.
             </p>
           </div>
 

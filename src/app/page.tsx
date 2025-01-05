@@ -297,26 +297,25 @@ export default function Home() {
             >
               {[
                 {
-                  question:
-                    "What is the Creator Program, and how does it work?",
+                  question: "What are the fees for creating and selling NFTs?",
                   answer:
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi volutpat convallis velit at bibendum.",
+                    "Mind Campus is deployed on the Edu Chain testnet and is in its beta phase. For now, there are no platform fees or minting fees. Users only need to pay for gas fees associated with their transactions.",
                 },
                 {
                   question:
-                    "What is a cross-chain marketplace, and why does it matter?",
+                    "Can I suggest new features or partner with Mind Campus?",
                   answer:
-                    "A Bitcoin cross-chain marketplace enables seamless trading of digital assets across different Bitcoin Layer 2 networks.",
+                    "Yes, we welcome collaboration and new ideas. If you'd like to suggest features or discuss partnership opportunities, please reach out to us at themindcampus@gmail.com.",
                 },
                 {
-                  question: "What wallets and payment methods are supported?",
+                  question: "What types of NFTs can I create on the platform?",
                   answer:
-                    "We support industry-standard EVM wallets like MetaMask and WalletConnect.",
+                    "The platform offers two NFT creation options. First, you can create standard collections which is suitable for PFP projects – you just need to provide your art. Second, you can create a badge which requires only one image. These badges can serve as crowdfunding tools, token gated passes, achievement badges, and rewards.",
                 },
                 {
-                  question: 'What is "Collectible as a Service" (CaaS)?',
+                  question: "What's next for Mind Campus?",
                   answer:
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi volutpat convallis velit at bibendum.",
+                    "While the sky is the limit, our immediate focus is on enabling badges as educational crowdfunding tools and verification tools for token gated communities and educational content. In the mid-term, we plan to enable DeSci opportunities from our platform.",
                 },
               ].map((item, index) => (
                 <AccordionItem
