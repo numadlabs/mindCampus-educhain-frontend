@@ -225,7 +225,7 @@ const Page = () => {
     //   ),
     // },
     {
-      url: "https://x.com/mintpark_io",
+      url: "/",
       isIcon: false,
       icon: (
         <ThreadIcon
@@ -264,7 +264,7 @@ const Page = () => {
             <section className="flex flex-col justify-center h-full sm:h-full  lg:h-[80vh] items-center lg:grid grid-cols-3 gap-8 lg:gap-8 mb-8">
               {/* Left Column - Collection Info */}
               <div className="flex w-full flex-col gap-8 sm:gap-6 order-2">
-                <div className="block lg:hidden">
+                {/* <div className="block lg:hidden">
                   <div className="flex gap-4 sm:gap-8">
                     {links.length > 0 && (
                       <div className="flex gap-4 sm:gap-6">
@@ -272,7 +272,7 @@ const Page = () => {
                           <button
                             key={i}
                             onClick={() => handleSocialClick(link.url)}
-                            className="p-2 hover:bg-neutral800/10 rounded-lg transition-colors"
+                            className="p-2 hover:bg-neutral800/10 rounded-lg hidden transition-colors"
                           >
                             {link.icon}
                           </button>
@@ -280,7 +280,7 @@ const Page = () => {
                       </div>
                     )}
                   </div>
-                </div>
+                </div> */}
                 <div className="flex flex-col gap-4 sm:gap-6">
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold capitalize text-neutral50">
                     {collectibles?.name}
@@ -322,7 +322,7 @@ const Page = () => {
                     </h2>
                   </div>
                 </div>
-                <div className="hidden lg:block">
+                {/* <div className="hidden lg:block">
                   <div className="flex gap-4 sm:gap-8 mt-2">
                     {links.length > 0 && (
                       <div className="flex gap-4 sm:gap-6">
@@ -338,7 +338,7 @@ const Page = () => {
                       </div>
                     )}
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Middle Column - Image and Progress */}
